@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve uploaded files (e.g. the site logo) from storage/app/public via
+    # its public/storage symlink, since the app is served from the project
+    # root rather than /public.
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
