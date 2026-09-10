@@ -49,6 +49,17 @@
                 </div>
             @endif
 
+            <!-- Instructions -->
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">How it works</h3>
+                <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+                    <li>Complete the application in short, guided steps — your answers are saved automatically as you type.</li>
+                    <li>You can leave at any point and pick up right where you left off, right up until the deadline.</li>
+                    <li>Review everything on the final step before submitting.</li>
+                    <li>Once submitted, the application is locked and cannot be edited further.</li>
+                </ol>
+            </div>
+
             <!-- Application status -->
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 @if ($application->isSubmitted())
@@ -84,16 +95,7 @@
                 @endif
             </div>
 
-            <!-- Instructions -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-sm font-semibold text-gray-800 mb-3">How it works</h3>
-                <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
-                    <li>Complete the application in short, guided steps — your answers are saved automatically as you type.</li>
-                    <li>You can leave at any point and pick up right where you left off, right up until the deadline.</li>
-                    <li>Review everything on the final step before submitting.</li>
-                    <li>Once submitted, the application is locked and cannot be edited further.</li>
-                </ol>
-            </div>
+            
         </div>
     </div>
 </x-app-layout>
