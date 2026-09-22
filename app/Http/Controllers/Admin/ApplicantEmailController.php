@@ -34,7 +34,13 @@ class ApplicantEmailController extends Controller
             ]);
         }
 
-        $sent = $mailer->send($applicant, $validated['subject'], $validated['message']);
+        $sent = $mailer->send(
+            $applicant,
+            $validated['subject'],
+            $validated['message'],
+            $validated['message_type'],
+            $request->user(),
+        );
 
         ActivityLogger::log(
             $validated['message_type'] === 'award' ? 'admin.award_notification_sent' : 'admin.applicant_email_sent',
@@ -49,7 +55,7 @@ class ApplicantEmailController extends Controller
         );
 
         if (! $sent) {
-            return back()->with('error', 'The email could not be sent. Check the Brevo configuration and logs.');
+            return back()->with('error', 'The email could not be sent. Check the SMTP configuration and logs.');
         }
 
         return back()->with('status', $validated['message_type'] === 'award'

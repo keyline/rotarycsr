@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="award-sky-panel flex min-h-screen flex-col items-center justify-center px-4 py-10">
+        <div class="award-sky-panel flex min-h-screen flex-col items-center justify-center px-4 py-10" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
             <div>
                 <a href="/">
                     <x-site-logo class="h-16 w-auto rounded-lg bg-white/95 px-3 py-2 shadow-lg" />

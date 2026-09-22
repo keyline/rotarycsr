@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ApplicantEmailLog;
 use App\Models\User;
 
 class ApplicantMessageMailer
@@ -14,7 +15,13 @@ class ApplicantMessageMailer
 
     public function __construct(private readonly BrevoMailer $mailer) {}
 
-    public function send(User $applicant, string $subject, string $message): bool
+    public function send(
+        User $applicant,
+        string $subject,
+        string $message,
+        string $type = 'general',
+        ?User $sentBy = null,
+    ): bool
     {
         $replacements = [
             '{name}' => $applicant->name,
@@ -29,6 +36,22 @@ class ApplicantMessageMailer
             .nl2br(e($resolvedMessage), false)
             .'</div>';
 
-        return $this->mailer->send($applicant->email, $applicant->name, $resolvedSubject, $html);
+        $sent = $this->mailer->send($applicant->email, $applicant->name, $resolvedSubject, $html);
+
+        if ($sent) {
+            ApplicantEmailLog::create([
+                'applicant_id' => $applicant->id,
+                'application_id' => $applicant->application?->id,
+                'sent_by' => $sentBy?->id,
+                'type' => $type,
+                'recipient_email' => $applicant->email,
+                'recipient_name' => $applicant->name,
+                'subject' => $resolvedSubject,
+                'body' => $html,
+                'sent_at' => now(),
+            ]);
+        }
+
+        return $sent;
     }
 }

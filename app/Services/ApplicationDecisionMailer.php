@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Application;
+use App\Models\ApplicantEmailLog;
 use App\Models\Setting;
+use App\Models\User;
 
 class ApplicationDecisionMailer
 {
@@ -24,30 +26,44 @@ class ApplicationDecisionMailer
 
     public function __construct(private readonly BrevoMailer $mailer) {}
 
-    public function send(Application $application): bool
+    public function send(Application $application, ?User $sentBy = null): bool
     {
         $application->loadMissing('user');
         $decision = $application->review_status;
         $template = self::DEFAULT_TEMPLATES[$decision];
         $subject = Setting::get("decision_mail_{$decision}_subject", $template['subject']);
         $body = Setting::get("decision_mail_{$decision}_body", $template['body']);
+        $applicant = $application->user;
 
         $subjectReplacements = [
-            '{name}' => $application->user->name,
+            '{name}' => $applicant->name,
             '{decision}' => ucfirst($decision),
             '{application_type}' => ucfirst($application->applicant_type),
         ];
         $bodyReplacements = [
-            '{name}' => e($application->user->name),
+            '{name}' => e($applicant->name),
             '{decision}' => e(ucfirst($decision)),
             '{application_type}' => e(ucfirst($application->applicant_type)),
         ];
+        $resolvedSubject = strip_tags(strtr($subject, $subjectReplacements));
+        $resolvedBody = strtr($body, $bodyReplacements);
 
-        return $this->mailer->send(
-            $application->user->email,
-            $application->user->name,
-            strtr($subject, $subjectReplacements),
-            strtr($body, $bodyReplacements),
-        );
+        $sent = $this->mailer->send($applicant->email, $applicant->name, $resolvedSubject, $resolvedBody);
+
+        if ($sent) {
+            ApplicantEmailLog::create([
+                'applicant_id' => $applicant->id,
+                'application_id' => $application->id,
+                'sent_by' => $sentBy?->id,
+                'type' => $decision,
+                'recipient_email' => $applicant->email,
+                'recipient_name' => $applicant->name,
+                'subject' => $resolvedSubject,
+                'body' => $resolvedBody,
+                'sent_at' => now(),
+            ]);
+        }
+
+        return $sent;
     }
 }

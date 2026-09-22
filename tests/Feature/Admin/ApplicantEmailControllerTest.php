@@ -45,6 +45,16 @@ class ApplicantEmailControllerTest extends TestCase
             'event' => 'admin.applicant_email_sent',
             'subject_id' => $applicant->id,
         ]);
+        $this->assertDatabaseHas('applicant_email_logs', [
+            'applicant_id' => $applicant->id,
+            'sent_by' => $admin->id,
+            'type' => 'general',
+            'recipient_email' => 'applicant@example.com',
+            'subject' => 'Application update',
+        ]);
+        $emailBody = (string) $applicant->emailLogs()->value('body');
+        $this->assertStringContainsString('Applicant &lt;script&gt;alert(1)&lt;/script&gt;', $emailBody);
+        $this->assertStringNotContainsString('<script>', $emailBody);
     }
 
     public function test_admin_can_send_an_award_notification(): void
@@ -75,6 +85,12 @@ class ApplicantEmailControllerTest extends TestCase
         $this->assertDatabaseHas('applications', [
             'user_id' => $applicant->id,
             'award_winner_by' => $admin->id,
+        ]);
+        $this->assertDatabaseHas('applicant_email_logs', [
+            'applicant_id' => $applicant->id,
+            'sent_by' => $admin->id,
+            'type' => 'award',
+            'subject' => 'Winner notification',
         ]);
         $this->assertNotNull($applicant->application->fresh()->award_winner_at);
     }
@@ -143,7 +159,8 @@ class ApplicantEmailControllerTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('error', 'The email could not be sent. Check the Brevo configuration and logs.');
+        $response->assertSessionHas('error', 'The email could not be sent. Check the SMTP configuration and logs.');
+        $this->assertDatabaseCount('applicant_email_logs', 0);
     }
 
     public function test_email_requires_a_subject_and_message(): void

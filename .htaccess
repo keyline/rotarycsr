@@ -1,6 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Git symlinks are checked out as plain files on some Windows setups.
+    # Route public asset requests to their real directories in that case.
+    RewriteRule ^build/(.*)$ public/build/$1 [L]
+    RewriteRule ^images/(.*)$ public/images/$1 [L]
+
     # Serve uploaded files (e.g. the site logo) from storage/app/public via
     # its public/storage symlink, since the app is served from the project
     # root rather than /public.

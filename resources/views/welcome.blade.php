@@ -19,7 +19,7 @@
         </header>
 
         <main class="flex-1">
-            <section class="award-hero flex min-h-[650px] items-center pt-20 sm:min-h-[680px]">
+            <section class="award-hero flex min-h-[650px] items-center pt-20 sm:min-h-[680px]" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 <div class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
                     <div class="max-w-xl">
                         <p class="award-kicker">Rotary International District 3291 presents</p>
@@ -53,15 +53,33 @@
                     </div>
                     <div class="mt-12 grid gap-6 md:grid-cols-2">
                         <a href="{{ route('register', ['type' => 'individual']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
-                            <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category I</span>
-                            <h3 class="mt-4 font-display text-4xl font-semibold">Corporate CSR Leader</h3>
-                            <p class="mt-4 max-w-md text-sm leading-6 text-white/70">Recognising individual CSR and ESG leaders whose vision has built measurable, lasting impact.</p>
+                            <div class="flex items-center gap-5">
+                                <img src="{{ asset('images/category-leader-navy.png') }}"
+                                     alt="Corporate CSR Leader category icon"
+                                     class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/40"
+                                     width="80"
+                                     height="80">
+                                <div class="min-w-0">
+                                    <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category I</span>
+                                    <h3 class="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">Corporate CSR Leader</h3>
+                                </div>
+                            </div>
+                            <p class="mt-6 max-w-md text-sm leading-6 text-white/70">Recognising individual CSR and ESG leaders whose vision has built measurable, lasting impact.</p>
                             <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an individual <span class="transition group-hover:translate-x-1">→</span></span>
                         </a>
                         <a href="{{ route('register', ['type' => 'corporate']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
-                            <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category II</span>
-                            <h3 class="mt-4 font-display text-4xl font-semibold">CSR Project Excellence</h3>
-                            <p class="mt-4 max-w-md text-sm leading-6 text-white/70">Honouring organisations and foundations delivering exemplary projects across Rotary's areas of focus.</p>
+                            <div class="flex items-center gap-5">
+                                <img src="{{ asset('images/category-corporate-navy.png') }}"
+                                     alt="CSR Project Excellence category icon"
+                                     class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/40"
+                                     width="80"
+                                     height="80">
+                                <div class="min-w-0">
+                                    <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category II</span>
+                                    <h3 class="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">CSR Project Excellence</h3>
+                                </div>
+                            </div>
+                            <p class="mt-6 max-w-md text-sm leading-6 text-white/70">Honouring organisations and foundations delivering exemplary projects across Rotary's areas of focus.</p>
                             <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an organisation <span class="transition group-hover:translate-x-1">→</span></span>
                         </a>
                     </div>

@@ -42,7 +42,7 @@ class ApplicationDecisionController extends Controller
             ]);
         });
 
-        $mailSent = $mailer->send($application->fresh('user'));
+        $mailSent = $mailer->send($application->fresh('user'), $request->user());
 
         ActivityLogger::log(
             'admin.application_reviewed',
@@ -54,7 +54,7 @@ class ApplicationDecisionController extends Controller
         $message = 'Application marked as '.ucfirst($decision).'.';
 
         if (! $mailSent) {
-            $message .= ' The email could not be sent; check the Brevo configuration and logs.';
+            $message .= ' The email could not be sent; check the SMTP configuration and logs.';
         }
 
         return back()->with('status', $message);
