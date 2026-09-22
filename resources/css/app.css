@@ -2,6 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body {
+        @apply bg-rotary-ivory text-rotary-navy;
+    }
+
+    ::selection {
+        @apply bg-rotary-gold text-white;
+    }
+}
+
+@layer components {
+    .award-card {
+        @apply rounded-[1.75rem] border border-rotary-gold/40 bg-white/90 shadow-[0_20px_60px_rgba(6,43,82,0.10)] backdrop-blur-sm;
+    }
+
+    .award-button {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-rotary-navy px-6 py-3 text-sm font-bold text-white shadow-lg shadow-rotary-navy/20 transition duration-200 hover:-translate-y-0.5 hover:bg-rotary-blue focus:outline-none focus:ring-2 focus:ring-rotary-gold focus:ring-offset-2;
+    }
+
+    .award-button-gold {
+        @apply award-button bg-rotary-gold text-rotary-navy shadow-rotary-gold/20 hover:bg-[#ddb052];
+    }
+
+    .award-kicker {
+        @apply text-xs font-bold uppercase tracking-[0.28em] text-rotary-gold;
+    }
+
+    .award-rule {
+        @apply flex items-center justify-center gap-4 text-rotary-gold;
+    }
+
+    .award-rule::before,
+    .award-rule::after {
+        content: '';
+        @apply h-px w-16 bg-rotary-gold/60;
+    }
+}
+
+.award-hero {
+    background-image: linear-gradient(90deg, rgba(255, 250, 240, 0.97) 0%, rgba(255, 250, 240, 0.84) 35%, rgba(255, 250, 240, 0.08) 68%), url('/images/csr-awards-kolkata-hero.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.award-sky-panel {
+    background-image: linear-gradient(180deg, rgba(6, 43, 82, 0.72), rgba(6, 43, 82, 0.88)), url('/images/csr-awards-kolkata-hero.png');
+    background-position: center;
+    background-size: cover;
+}
+
 [x-cloak] {
     display: none !important;
 }

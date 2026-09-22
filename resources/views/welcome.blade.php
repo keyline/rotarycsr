@@ -6,56 +6,74 @@
     <title>Rotary District 3291 CSR Awards</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=cormorant-garamond:500,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-[#F4F6F9] text-[#1b1b18]">
+<body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
-        <header class="w-full border-b border-gray-200 bg-white">
-            <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                <x-site-logo class="h-10 w-auto" />
-
-                @if (Route::has('login'))
-                    <nav class="flex items-center gap-4">
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-4 py-2 text-sm font-semibold text-white bg-[#17458F] rounded-md hover:bg-[#123669] transition">Dashboard</a>
-                        @else
-                            <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold text-[#17458F] hover:text-[#123669] transition">Log in</a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('apply') }}" class="px-4 py-2 text-sm font-semibold text-white bg-[#17458F] rounded-md hover:bg-[#123669] transition">Register</a>
-                            @endif
-                        @endauth
-                    </nav>
-                @endif
+        <header class="absolute inset-x-0 top-0 z-20 w-full border-b border-white/30 bg-white/80 backdrop-blur-md">
+            <div class="mx-auto flex max-w-7xl items-center px-5 py-2.5 sm:px-8">
+                <x-site-logo class="h-10 w-auto sm:h-12" />
             </div>
         </header>
 
-        <main class="flex-1 flex items-center justify-center px-6">
-            <div class="max-w-2xl w-full text-center py-16">
-                <x-site-logo class="h-20 w-auto mx-auto mb-10" />
+        <main class="flex-1">
+            <section class="award-hero flex min-h-[650px] items-center pt-20 sm:min-h-[680px]">
+                <div class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
+                    <div class="max-w-xl">
+                        <p class="award-kicker">Rotary International District 3291 presents</p>
+                        <h1 class="sr-only">Rotary CSR Awards 2026</h1>
+                        <img src="{{ asset('images/rotary-csr-awards-2026-tight.png') }}"
+                             alt="Rotary CSR Awards 2026"
+                             class="-mt-5 h-auto w-full max-w-[340px] sm:max-w-[370px]"
+                             width="1246"
+                             height="1263">
+                        <div class="mb-4 h-1 w-16 bg-rotary-gold"></div>
+                        <p class="font-display text-3xl font-semibold leading-tight text-rotary-navy sm:text-4xl">Real impact deserves recognition.</p>
+                        <p class="mt-3 max-w-xl text-base leading-7 text-slate-700 sm:text-lg">A platform to honour organisations and leaders creating a stronger, more inclusive tomorrow.</p>
 
-                <p class="text-sm font-semibold tracking-wide text-[#F7A81B] uppercase mb-3">Rotary District 3291</p>
-                <h1 class="text-3xl sm:text-4xl font-bold text-[#17458F] mb-4">CSR Awards Application &amp; Management Portal</h1>
-                <p class="text-base sm:text-lg text-gray-600 mb-10">
-                    Apply for the 2nd Rotary CSR Awards under the <span class="font-semibold text-gray-800">Corporate Excellence Award</span>
-                    or <span class="font-semibold text-gray-800">CSR Leader of the Year</span> category. Register to start your application,
-                    save your progress as a draft, and submit before the deadline.
-                </p>
-
-                <div class="flex items-center justify-center gap-4">
+                        <div class="mt-6 flex flex-wrap items-center gap-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="px-6 py-3 text-sm font-semibold text-white bg-[#17458F] rounded-md hover:bg-[#123669] transition">Go to Dashboard</a>
+                        <a href="{{ url('/dashboard') }}" class="award-button">Go to Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="px-6 py-3 text-sm font-semibold text-[#17458F] border border-[#17458F] rounded-md hover:bg-[#17458F] hover:text-white transition">Log in</a>
-                        <a href="{{ route('apply') }}" class="px-6 py-3 text-sm font-semibold text-white bg-[#F7A81B] rounded-md hover:bg-[#d99311] transition">Start Application</a>
+                        <a href="{{ route('apply') }}" class="award-button-gold">Start Your Nomination</a>
+                        <a href="{{ route('login') }}" class="rounded-full border border-rotary-navy/30 bg-white/70 px-6 py-3 text-sm font-bold text-rotary-navy backdrop-blur transition hover:border-rotary-navy hover:bg-white">Continue Application</a>
                     @endauth
                 </div>
-            </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-rotary-ivory px-5 py-20 sm:px-8">
+                <div class="mx-auto max-w-6xl">
+                    <div class="text-center">
+                        <p class="award-rule award-kicker">Award Categories</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold sm:text-5xl">Two paths. One shared purpose.</h2>
+                    </div>
+                    <div class="mt-12 grid gap-6 md:grid-cols-2">
+                        <a href="{{ route('register', ['type' => 'individual']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
+                            <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category I</span>
+                            <h3 class="mt-4 font-display text-4xl font-semibold">Corporate CSR Leader</h3>
+                            <p class="mt-4 max-w-md text-sm leading-6 text-white/70">Recognising individual CSR and ESG leaders whose vision has built measurable, lasting impact.</p>
+                            <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an individual <span class="transition group-hover:translate-x-1">→</span></span>
+                        </a>
+                        <a href="{{ route('register', ['type' => 'corporate']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
+                            <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category II</span>
+                            <h3 class="mt-4 font-display text-4xl font-semibold">CSR Project Excellence</h3>
+                            <p class="mt-4 max-w-md text-sm leading-6 text-white/70">Honouring organisations and foundations delivering exemplary projects across Rotary's areas of focus.</p>
+                            <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an organisation <span class="transition group-hover:translate-x-1">→</span></span>
+                        </a>
+                    </div>
+                </div>
+            </section>
         </main>
 
-        <footer class="w-full border-t border-gray-200 bg-white py-6">
-            <p class="text-center text-xs text-gray-400">&copy; {{ date('Y') }} Rotary District 3291. All rights reserved.</p>
+        <footer class="w-full bg-rotary-navy px-6 py-8 text-white/60">
+            <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs sm:flex-row">
+                <p>&copy; {{ date('Y') }} Rotary International District 3291.</p>
+                <p class="uppercase tracking-[0.2em] text-rotary-gold">Create lasting impact</p>
+            </div>
         </footer>
     </div>
 </body>

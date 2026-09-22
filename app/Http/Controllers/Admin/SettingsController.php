@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\ActivityLogger;
+use App\Services\ApplicationDecisionMailer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
@@ -16,7 +16,11 @@ class SettingsController extends Controller
     {
         return view('admin.settings.index', [
             'deadline' => Setting::get('submission_deadline'),
-            'logoPath' => Setting::get('site_logo_path'),
+            'decisionMailTemplates' => collect(ApplicationDecisionMailer::DEFAULT_TEMPLATES)
+                ->map(fn (array $template, string $decision): array => [
+                    'subject' => Setting::get("decision_mail_{$decision}_subject", $template['subject']),
+                    'body' => Setting::get("decision_mail_{$decision}_body", $template['body']),
+                ]),
         ]);
     }
 
@@ -39,43 +43,25 @@ class SettingsController extends Controller
         return back()->with('status', 'Submission deadline updated.');
     }
 
-    public function updateLogo(Request $request): RedirectResponse
+    public function updateDecisionEmails(Request $request): RedirectResponse
     {
-        $request->validate([
-            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+        $validated = $request->validate([
+            'templates' => ['required', 'array'],
+            'templates.approved.subject' => ['required', 'string', 'max:255'],
+            'templates.approved.body' => ['required', 'string', 'max:10000'],
+            'templates.rejected.subject' => ['required', 'string', 'max:255'],
+            'templates.rejected.body' => ['required', 'string', 'max:10000'],
+            'templates.blacklisted.subject' => ['required', 'string', 'max:255'],
+            'templates.blacklisted.body' => ['required', 'string', 'max:10000'],
         ]);
 
-        $previousPath = Setting::get('site_logo_path');
-
-        $path = $request->file('logo')->store('branding', 'public');
-
-        Setting::set('site_logo_path', $path);
-
-        if ($previousPath) {
-            Storage::disk('public')->delete($previousPath);
+        foreach ($validated['templates'] as $decision => $template) {
+            Setting::set("decision_mail_{$decision}_subject", $template['subject']);
+            Setting::set("decision_mail_{$decision}_body", $template['body']);
         }
 
-        ActivityLogger::log(
-            'admin.logo_updated',
-            'Site logo was updated.',
-            properties: ['path' => $path],
-        );
+        ActivityLogger::log('admin.decision_emails_updated', 'Application decision email templates were updated.');
 
-        return back()->with('status', 'Site logo updated.');
-    }
-
-    public function removeLogo(): RedirectResponse
-    {
-        $path = Setting::get('site_logo_path');
-
-        if ($path) {
-            Storage::disk('public')->delete($path);
-        }
-
-        Setting::set('site_logo_path', null);
-
-        ActivityLogger::log('admin.logo_removed', 'Site logo was reset to the default.');
-
-        return back()->with('status', 'Site logo reset to the default.');
+        return back()->with('status', 'Decision email templates updated.');
     }
 }

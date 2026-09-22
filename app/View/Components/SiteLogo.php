@@ -2,7 +2,6 @@
 
 namespace App\View\Components;
 
-use App\Models\Setting;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
@@ -12,9 +11,7 @@ class SiteLogo extends Component
 
     public function __construct()
     {
-        $path = Setting::get('site_logo_path');
-
-        $this->url = $path ? asset('storage/'.$path) : asset('images/rotary-logo.svg');
+        $this->url = asset('images/logo.png');
     }
 
     public function render(): View

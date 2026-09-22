@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -18,7 +17,9 @@ return new class extends Migration
             $table->timestamp('otp_expires_at')->nullable()->after('otp_code');
         });
 
-        DB::statement('ALTER TABLE users MODIFY password VARCHAR(255) NULL');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('password')->nullable()->change();
+        });
     }
 
     /**
@@ -30,6 +31,8 @@ return new class extends Migration
             $table->dropColumn(['company_name', 'otp_code', 'otp_expires_at']);
         });
 
-        DB::statement('ALTER TABLE users MODIFY password VARCHAR(255) NOT NULL');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('password')->nullable(false)->change();
+        });
     }
 };

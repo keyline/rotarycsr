@@ -50,6 +50,12 @@ class RegisteredUserController extends Controller
 
         $existing = User::where('email', $request->email)->first();
 
+        if ($existing?->isBlacklisted()) {
+            throw ValidationException::withMessages([
+                'email' => 'This email address has been blacklisted and cannot submit applications in future award cycles.',
+            ]);
+        }
+
         if ($existing && ($existing->hasVerifiedEmail() || $existing->password)) {
             throw ValidationException::withMessages([
                 'email' => 'This email is already registered. Please log in instead.',

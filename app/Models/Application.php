@@ -10,6 +10,7 @@ class Application extends Model
 {
     protected $fillable = [
         'user_id', 'applicant_type', 'status', 'current_step', 'submitted_at',
+        'review_status', 'reviewed_at', 'reviewed_by', 'award_winner_at', 'award_winner_by',
         'corporate_category', 'focus_area',
         'corporate_foundation_name', 'csr_registration_number', 'industry_sector',
         'head_office_location', 'project_name', 'project_period', 'geographic_coverage', 'csr_budget',
@@ -24,6 +25,8 @@ class Application extends Model
     {
         return [
             'submitted_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+            'award_winner_at' => 'datetime',
             'csr_budget' => 'decimal:2',
             'ind_projects' => 'array',
         ];
@@ -32,6 +35,16 @@ class Application extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function awardSelector(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'award_winner_by');
     }
 
     public function isSubmitted(): bool

@@ -5,12 +5,12 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-display text-3xl font-bold leading-tight text-rotary-navy">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-10">
+    <div class="py-10 sm:py-14">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if (session('status'))
@@ -20,10 +20,11 @@
             @endif
 
             <!-- Welcome -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+            <div class="award-card p-6 sm:p-8">
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                     <div>
-                        <h3 class="text-lg font-bold text-[#17458F]">
+                        <p class="award-kicker mb-2">Rotary CSR Awards 2026</p>
+                        <h3 class="font-display text-3xl font-bold text-rotary-navy">
                             Welcome, {{ $user->name }}
                         </h3>
                         <p class="text-sm text-gray-500 mt-1">
@@ -49,8 +50,15 @@
                 </div>
             @endif
 
+            @if ($user->isBlacklisted())
+                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                    <span class="font-bold">Account blacklisted.</span>
+                    You cannot edit this application or participate in future award cycles with this account.
+                </div>
+            @endif
+
             <!-- Instructions -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+            <div class="award-card p-6 sm:p-8">
                 <h3 class="text-sm font-semibold text-gray-800 mb-3">How it works</h3>
                 <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
                     <li>Complete the application in short, guided steps — your answers are saved automatically as you type.</li>
@@ -61,7 +69,7 @@
             </div>
 
             <!-- Application status -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+            <div class="award-card p-6 sm:p-8">
                 @if ($application->isSubmitted())
                     <div class="flex items-center gap-3 mb-4">
                         <span class="h-9 w-9 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
@@ -84,11 +92,13 @@
                         <div class="bg-[#17458F] h-2 rounded-full transition-all" style="width: {{ $application->progressPercent() }}%"></div>
                     </div>
 
-                    @if ($deadlinePassed)
+                    @if ($user->isBlacklisted())
+                        <p class="text-sm font-medium text-red-700">This application is read-only because the account is blacklisted.</p>
+                    @elseif ($deadlinePassed)
                         <p class="text-sm text-red-600">The submission deadline has passed. You can no longer continue this application.</p>
                     @else
                         <a href="{{ route('application.step', min($application->current_step, $application->totalSteps())) }}"
-                           class="inline-block px-5 py-2.5 text-sm font-semibold text-white bg-[#F7A81B] rounded-md hover:bg-[#d99311] transition">
+                           class="award-button-gold">
                             {{ $application->current_step > 1 ? 'Continue Application' : 'Start Application' }}
                         </a>
                     @endif

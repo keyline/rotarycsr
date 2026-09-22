@@ -7,14 +7,14 @@
     <title>{{ $title ?? 'Admin' }} — Rotary CSR Awards</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=cormorant-garamond:500,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-[#F7F8FA] text-[#1b1b18]">
+<body class="bg-rotary-ivory font-sans text-rotary-navy antialiased">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <aside class="w-56 shrink-0 bg-[#12325E] text-white flex flex-col">
+        <aside class="flex w-56 shrink-0 flex-col bg-rotary-navy text-white">
             <div class="h-16 flex items-center px-5 border-b border-white/10">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 bg-white rounded px-2 py-1">
                     <x-site-logo class="h-6 w-auto" />
@@ -70,7 +70,7 @@
         <!-- Main -->
         <div class="flex-1 min-w-0">
             <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-                <h1 class="text-lg font-semibold text-[#12325E]">{{ $title ?? 'Dashboard' }}</h1>
+                <h1 class="font-display text-2xl font-bold text-rotary-navy">{{ $title ?? 'Dashboard' }}</h1>
                 <div>{{ $actions ?? '' }}</div>
             </header>
 
@@ -78,6 +78,12 @@
                 @if (session('status'))
                     <div class="mb-4 px-4 py-2.5 text-sm font-medium bg-green-50 text-green-700 border border-green-200 rounded-md">
                         {{ session('status') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
+                        {{ session('error') }}
                     </div>
                 @endif
 

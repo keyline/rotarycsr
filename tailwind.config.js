@@ -12,7 +12,17 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Manrope', ...defaultTheme.fontFamily.sans],
+                display: ['Cormorant Garamond', ...defaultTheme.fontFamily.serif],
+            },
+            colors: {
+                rotary: {
+                    navy: '#062b52',
+                    blue: '#17458f',
+                    sky: '#55ace0',
+                    gold: '#c8942f',
+                    ivory: '#fffaf0',
+                },
             },
         },
     },

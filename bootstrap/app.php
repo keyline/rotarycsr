@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureApplicantIsNotBlacklisted;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\LogUserActivity;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->appendToGroup('web', LogUserActivity::class);
-        $middleware->alias(['admin' => EnsureUserIsAdmin::class]);
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
+            'not-blacklisted' => EnsureApplicantIsNotBlacklisted::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

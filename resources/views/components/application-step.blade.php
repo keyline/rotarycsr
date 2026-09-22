@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-display text-3xl font-bold leading-tight text-rotary-navy">
                 {{ \App\Services\ApplicationOptions::stepTitle($application->applicant_type, $stepKey) }}
             </h2>
             <span class="text-sm text-gray-500">Step {{ $step }} of {{ $totalSteps }}</span>
@@ -20,7 +20,7 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow-sm sm:rounded-lg p-6 sm:p-8">
+            <div class="award-card p-6 sm:p-8">
                 <form id="wizard-form" method="POST" action="{{ route('application.step', $step) }}">
                     @csrf
 
@@ -37,7 +37,7 @@
                             @endif
 
                             @unless ($locked)
-                                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#17458F] rounded-md hover:bg-[#123669] transition">
+                                <button type="submit" class="award-button">
                                     Save &amp; Continue
                                 </button>
                             @endunless

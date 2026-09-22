@@ -12,16 +12,21 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'applicant_type', 'company_name', 'role'])]
+#[Fillable(['name', 'email', 'password', 'applicant_type', 'company_name', 'role', 'blacklisted_at', 'blacklisted_by'])]
 #[Hidden(['password', 'remember_token', 'otp_code'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, MustVerifyEmailTrait;
+    use HasFactory, MustVerifyEmailTrait, Notifiable;
 
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isBlacklisted(): bool
+    {
+        return $this->blacklisted_at !== null;
     }
 
     public function application(): HasOne
@@ -39,6 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'blacklisted_at' => 'datetime',
         ];
     }
 }

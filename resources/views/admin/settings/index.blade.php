@@ -1,41 +1,5 @@
 <x-admin-layout :title="'Settings'">
-    <div class="grid lg:grid-cols-2 gap-6 max-w-4xl">
-        <!-- Site logo -->
-        <div class="bg-white rounded-lg border border-gray-200 p-5 h-fit">
-            <h2 class="text-sm font-semibold text-gray-800 mb-1">Site Logo</h2>
-            <p class="text-xs text-gray-500 mb-4">
-                Shown across the site header, login/register pages, and the admin sidebar. PNG, JPG, SVG, or WEBP — max 2MB.
-            </p>
-
-            <div class="flex items-center gap-4 mb-4 p-4 bg-gray-50 rounded-md border border-gray-100">
-                <x-site-logo class="h-10 w-auto" />
-                <span class="text-xs text-gray-400">{{ $logoPath ? 'Custom logo' : 'Default logo' }}</span>
-            </div>
-
-            <form method="POST" action="{{ route('admin.settings.logo.update') }}" enctype="multipart/form-data" class="space-y-3">
-                @csrf
-                <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp"
-                       class="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#17458F]/10 file:text-[#17458F] hover:file:bg-[#17458F]/20" required>
-                @error('logo')
-                    <p class="text-xs text-red-600">{{ $message }}</p>
-                @enderror
-                <button type="submit" class="w-full px-3 py-2 text-sm font-semibold text-white bg-[#17458F] rounded-md hover:bg-[#123669] transition">
-                    Upload Logo
-                </button>
-            </form>
-
-            @if ($logoPath)
-                <form method="POST" action="{{ route('admin.settings.logo.remove') }}" class="mt-2"
-                      onsubmit="return confirm('Reset to the default Rotary logo?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full px-3 py-2 text-sm font-semibold text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition">
-                        Reset to Default Logo
-                    </button>
-                </form>
-            @endif
-        </div>
-
+    <div class="max-w-4xl">
         <!-- Deadline -->
         <div class="bg-white rounded-lg border border-gray-200 p-5 h-fit">
             <h2 class="text-sm font-semibold text-gray-800 mb-1">Global Submission Deadline</h2>
@@ -64,5 +28,48 @@
                 </button>
             </form>
         </div>
+    </div>
+
+    <div class="mt-6 max-w-4xl rounded-lg border border-gray-200 bg-white p-5">
+        <h2 class="text-sm font-semibold text-gray-800">Application Decision Emails</h2>
+        <p class="mt-1 text-xs leading-5 text-gray-500">
+            These emails are sent when an application is approved, rejected, or blacklisted.
+            Available placeholders: <code>{name}</code>, <code>{decision}</code>, and <code>{application_type}</code>.
+            HTML is supported in the message body.
+        </p>
+
+        <form method="POST" action="{{ route('admin.settings.decision-emails') }}" class="mt-5 space-y-6">
+            @csrf
+            @method('PUT')
+
+            @foreach (['approved' => 'Approved', 'rejected' => 'Rejected', 'blacklisted' => 'Blacklisted'] as $decision => $label)
+                <fieldset class="rounded-lg border border-gray-200 p-4">
+                    <legend class="px-2 text-xs font-bold uppercase tracking-wider text-[#17458F]">{{ $label }} email</legend>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="{{ $decision }}-subject" class="mb-1 block text-xs font-medium text-gray-600">Subject</label>
+                            <input id="{{ $decision }}-subject" type="text" name="templates[{{ $decision }}][subject]"
+                                   value="{{ old("templates.{$decision}.subject", $decisionMailTemplates[$decision]['subject']) }}"
+                                   class="w-full rounded-md border-gray-300 text-sm focus:border-[#17458F] focus:ring-[#17458F]" required>
+                            @error("templates.{$decision}.subject")<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label for="{{ $decision }}-body" class="mb-1 block text-xs font-medium text-gray-600">Message body</label>
+                            <x-rich-textarea
+                                :name="'templates['.$decision.'][body]'"
+                                :id="$decision.'-body'"
+                                :value="old('templates.'.$decision.'.body', $decisionMailTemplates[$decision]['body'])"
+                                rows="6"
+                            />
+                            @error("templates.{$decision}.body")<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                        </div>
+                    </div>
+                </fieldset>
+            @endforeach
+
+            <button type="submit" class="rounded-md bg-[#17458F] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#123669]">
+                Save Email Templates
+            </button>
+        </form>
     </div>
 </x-admin-layout>

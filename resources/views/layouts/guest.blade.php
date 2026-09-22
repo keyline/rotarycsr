@@ -9,20 +9,20 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=cormorant-garamond:500,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+        <div class="award-sky-panel flex min-h-screen flex-col items-center justify-center px-4 py-10">
             <div>
                 <a href="/">
-                    <x-site-logo class="h-16 w-auto" />
+                    <x-site-logo class="h-16 w-auto rounded-lg bg-white/95 px-3 py-2 shadow-lg" />
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg border-t-4 border-[#F7A81B]">
+            <div class="award-card mt-7 w-full px-6 py-7 sm:max-w-md sm:px-8">
                 {{ $slot }}
             </div>
         </div>

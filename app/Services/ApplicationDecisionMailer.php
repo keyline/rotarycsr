@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Application;
+use App\Models\Setting;
+
+class ApplicationDecisionMailer
+{
+    public const DEFAULT_TEMPLATES = [
+        'approved' => [
+            'subject' => 'Your Rotary CSR Awards application has been approved',
+            'body' => '<p>Dear {name},</p><p>We are pleased to confirm that your {application_type} application for the Rotary CSR Awards 2026 has been approved.</p><p>Regards,<br>Rotary District 3291 CSR Awards Team</p>',
+        ],
+        'rejected' => [
+            'subject' => 'Update on your Rotary CSR Awards application',
+            'body' => '<p>Dear {name},</p><p>After careful review, your {application_type} application for the Rotary CSR Awards 2026 was not selected.</p><p>Thank you for your participation.</p>',
+        ],
+        'blacklisted' => [
+            'subject' => 'Important notice regarding your Rotary CSR Awards application',
+            'body' => '<p>Dear {name},</p><p>Your {application_type} application has been blacklisted. You will not be eligible to apply in future award cycles using this account or email address.</p><p>Regards,<br>Rotary District 3291 CSR Awards Team</p>',
+        ],
+    ];
+
+    public function __construct(private readonly BrevoMailer $mailer) {}
+
+    public function send(Application $application): bool
+    {
+        $application->loadMissing('user');
+        $decision = $application->review_status;
+        $template = self::DEFAULT_TEMPLATES[$decision];
+        $subject = Setting::get("decision_mail_{$decision}_subject", $template['subject']);
+        $body = Setting::get("decision_mail_{$decision}_body", $template['body']);
+
+        $subjectReplacements = [
+            '{name}' => $application->user->name,
+            '{decision}' => ucfirst($decision),
+            '{application_type}' => ucfirst($application->applicant_type),
+        ];
+        $bodyReplacements = [
+            '{name}' => e($application->user->name),
+            '{decision}' => e(ucfirst($decision)),
+            '{application_type}' => e(ucfirst($application->applicant_type)),
+        ];
+
+        return $this->mailer->send(
+            $application->user->email,
+            $application->user->name,
+            strtr($subject, $subjectReplacements),
+            strtr($body, $bodyReplacements),
+        );
+    }
+}

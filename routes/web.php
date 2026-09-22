@@ -2,11 +2,15 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ApplicantController;
+use App\Http\Controllers\Admin\ApplicantEmailController;
+use App\Http\Controllers\Admin\ApplicationDecisionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SelectedApplicantExportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\ApplicationWizardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +22,7 @@ Route::get('/apply', function () {
     return view('apply');
 })->name('apply');
 
-Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+Route::get('/dashboard', function (Request $request) {
     if (Auth::user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
     }
@@ -32,7 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth')->prefix('application')->name('application.')->group(function () {
+Route::middleware(['auth', 'not-blacklisted'])->prefix('application')->name('application.')->group(function () {
     Route::get('/step/{step}', [ApplicationWizardController::class, 'show'])->whereNumber('step')->name('step');
     Route::post('/step/{step}', [ApplicationWizardController::class, 'store'])->whereNumber('step');
     Route::post('/autosave', [ApplicationWizardController::class, 'autosave'])->name('autosave');
@@ -44,13 +48,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
+    Route::post('/applicants/export-selected', SelectedApplicantExportController::class)->name('applicants.export-selected');
+    Route::post('/applicants/{applicant}/email', ApplicantEmailController::class)->name('applicants.email');
     Route::get('/applicants/{applicant}', [ApplicantController::class, 'show'])->name('applicants.show');
+    Route::patch('/applications/{application}/decision', ApplicationDecisionController::class)->name('applications.decision');
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings/deadline', [SettingsController::class, 'updateDeadline'])->name('settings.deadline');
-    Route::post('/settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.logo.update');
-    Route::delete('/settings/logo', [SettingsController::class, 'removeLogo'])->name('settings.logo.remove');
+    Route::put('/settings/decision-emails', [SettingsController::class, 'updateDecisionEmails'])->name('settings.decision-emails');
 });
 
 require __DIR__.'/auth.php';

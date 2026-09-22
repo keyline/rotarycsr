@@ -26,6 +26,48 @@
     </div>
 </div>
 
+@if ($application?->isSubmitted())
+    @php
+        $reviewStatus = $application->review_status ?? 'pending';
+        $reviewClasses = match ($reviewStatus) {
+            'approved' => 'bg-green-50 text-green-700 border-green-200',
+            'rejected' => 'bg-red-50 text-red-700 border-red-200',
+            'blacklisted' => 'bg-gray-900 text-white border-gray-900',
+            default => 'bg-amber-50 text-amber-700 border-amber-200',
+        };
+    @endphp
+    <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Review decision</p>
+                <span class="mt-1.5 inline-flex rounded-full border px-2.5 py-1 text-xs font-bold {{ $reviewClasses }}">
+                    {{ ucfirst($reviewStatus) }}
+                </span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @foreach ([
+                    'approved' => ['Approve', 'bg-green-600 hover:bg-green-700'],
+                    'rejected' => ['Reject', 'bg-red-600 hover:bg-red-700'],
+                    'blacklisted' => ['Blacklist', 'bg-gray-900 hover:bg-black'],
+                ] as $decision => [$label, $classes])
+                    <form method="POST" action="{{ route('admin.applications.decision', $application) }}"
+                          @if ($decision === 'blacklisted') onsubmit="return confirm('Blacklist this applicant? They will be blocked from future award cycles.');" @endif>
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="decision" value="{{ $decision }}">
+                        <button type="submit"
+                                class="rounded-lg px-3 py-2 text-xs font-bold text-white transition {{ $classes }} disabled:cursor-not-allowed disabled:opacity-40"
+                                {{ $reviewStatus === $decision ? 'disabled' : '' }}>
+                            {{ $label }}
+                        </button>
+                    </form>
+                @endforeach
+            </div>
+        </div>
+        <p class="mt-3 text-xs text-gray-500">Saving a decision emails the applicant. Blacklisting also blocks all future applications for this email.</p>
+    </div>
+@endif
+
 @if (! $application)
     <p class="text-sm text-gray-400 text-center py-8">This applicant hasn't started their application yet.</p>
 @elseif ($isCorporate)
