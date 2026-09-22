@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\PasswordResetNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -28,6 +29,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isBlacklisted(): bool
     {
         return $this->blacklisted_at !== null;
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] mixed $token): void
+    {
+        $this->notify(new PasswordResetNotification((string) $token));
     }
 
     public function application(): HasOne
