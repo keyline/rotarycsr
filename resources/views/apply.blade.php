@@ -21,7 +21,7 @@
             </div>
         </header>
 
-        <main class="award-sky-panel flex flex-1 items-center justify-center px-5 py-16 sm:px-8">
+        <main class="award-sky-panel flex flex-1 items-center justify-center px-5 py-16 sm:px-8" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
             <div class="w-full max-w-5xl">
                 <div class="mb-10 text-center text-white">
                     <p class="award-kicker mb-3">Rotary CSR Awards 2026</p>
