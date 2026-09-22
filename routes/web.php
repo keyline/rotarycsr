@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ApplicantController;
 use App\Http\Controllers\Admin\ApplicantEmailController;
 use App\Http\Controllers\Admin\ApplicantEmailLogController;
 use App\Http\Controllers\Admin\ApplicationDecisionController;
+use App\Http\Controllers\Admin\AwardWinnerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SelectedApplicantExportController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -54,6 +55,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/applicants/{applicant}/email', ApplicantEmailController::class)->name('applicants.email');
     Route::get('/applicants/{applicant}', [ApplicantController::class, 'show'])->name('applicants.show');
     Route::patch('/applications/{application}/decision', ApplicationDecisionController::class)->name('applications.decision');
+    Route::post('/applications/{application}/award-winner', AwardWinnerController::class)->name('applications.award-winner');
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');

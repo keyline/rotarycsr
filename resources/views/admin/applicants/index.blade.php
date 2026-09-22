@@ -3,14 +3,16 @@
         open: false,
         loading: false,
         content: '',
+        awardConfirmOpen: false,
+        awardAction: '',
+        awardApplicantName: '',
+        awardApplicantEmail: '',
         emailOpen: false,
         emailAction: '',
-        emailType: 'general',
         emailRecipientName: '',
         emailRecipientEmail: '',
         emailSubject: '',
         emailMessage: '',
-        emailMarkWinner: false,
         selected: [],
         visibleIds: @js($applicants->pluck('id')->values()),
         allSelected() {
@@ -19,17 +21,21 @@
         toggleAll(checked) {
             this.selected = checked ? [...this.visibleIds] : [];
         },
-        composeEmail(applicant, type) {
+        confirmAward(applicant) {
+            this.awardAction = applicant.action;
+            this.awardApplicantName = applicant.name;
+            this.awardApplicantEmail = applicant.email;
+            this.awardConfirmOpen = true;
+        },
+        composeAwardEmail(applicant) {
             this.emailAction = applicant.action;
-            this.emailType = type;
             this.emailRecipientName = applicant.name;
             this.emailRecipientEmail = applicant.email;
-            this.emailSubject = type === 'award' ? @js(\App\Services\ApplicantMessageMailer::AWARD_SUBJECT) : '';
-            this.emailMessage = type === 'award' ? @js(\App\Services\ApplicantMessageMailer::AWARD_MESSAGE) : @js(\App\Services\ApplicantMessageMailer::GENERAL_MESSAGE);
-            this.emailMarkWinner = false;
+            this.emailSubject = @js(\App\Services\ApplicantMessageMailer::AWARD_SUBJECT);
+            this.emailMessage = @js(\App\Services\ApplicantMessageMailer::AWARD_MESSAGE);
             this.emailOpen = true;
         }
-    }" @keydown.escape.window="open = false; emailOpen = false">
+    }" @keydown.escape.window="open = false; awardConfirmOpen = false; emailOpen = false">
         <!-- Filters -->
         <form method="GET" class="bg-white border border-gray-200 rounded-lg p-4 mb-4 flex flex-wrap items-end gap-3">
             <div class="flex-1 min-w-[200px]">
@@ -121,7 +127,22 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($applicants as $applicant)
-                            <tr class="hover:bg-gray-50">
+                            @php
+                                $reviewStatus = $applicant->application?->review_status ?? 'not_started';
+                                $reviewClasses = match ($reviewStatus) {
+                                    'approved' => 'bg-green-50 text-green-700',
+                                    'rejected' => 'bg-red-50 text-red-700',
+                                    'blacklisted' => 'bg-gray-900 text-white',
+                                    'pending' => 'bg-amber-50 text-amber-700',
+                                    default => 'bg-gray-100 text-gray-500',
+                                };
+                                $isAwardWinner = $applicant->application?->award_winner_at !== null;
+                                $awardEmailSent = (bool) $applicant->award_email_sent;
+                                $awardComplete = $isAwardWinner && $awardEmailSent;
+                            @endphp
+                            <tr data-applicant-row="{{ $applicant->id }}"
+                                data-award-complete="{{ $awardComplete ? 'true' : 'false' }}"
+                                class="transition {{ $awardComplete ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50' }}">
                                 <td class="px-4 py-2.5">
                                     <input type="checkbox" value="{{ $applicant->id }}" x-model.number="selected"
                                            aria-label="Select {{ $applicant->name }}"
@@ -147,16 +168,6 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-2.5">
-                                    @php
-                                        $reviewStatus = $applicant->application?->review_status ?? 'not_started';
-                                        $reviewClasses = match ($reviewStatus) {
-                                            'approved' => 'bg-green-50 text-green-700',
-                                            'rejected' => 'bg-red-50 text-red-700',
-                                            'blacklisted' => 'bg-gray-900 text-white',
-                                            'pending' => 'bg-amber-50 text-amber-700',
-                                            default => 'bg-gray-100 text-gray-500',
-                                        };
-                                    @endphp
                                     <span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium {{ $reviewClasses }}">
                                         {{ $reviewStatus === 'not_started' ? 'Not started' : ucfirst($reviewStatus) }}
                                     </span>
@@ -176,6 +187,16 @@
                                         <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $actionStatusClasses }}">
                                             {{ $actionStatusLabel }}
                                         </span>
+                                        @if ($isAwardWinner)
+                                            <span class="inline-flex rounded-full bg-[#d49b2a]/15 px-2.5 py-1 text-xs font-semibold text-[#8a5d08]">
+                                                Award Winner
+                                            </span>
+                                        @endif
+                                        @if ($awardEmailSent)
+                                            <span class="inline-flex rounded-full bg-green-600 px-2.5 py-1 text-xs font-semibold text-white">
+                                                Award Email Sent
+                                            </span>
+                                        @endif
                                         <button type="button"
                                                 @click="
                                                     open = true; loading = true; content = '';
@@ -201,19 +222,33 @@
                                             </svg>
                                             Email
                                         </a>
-                                        @if ($reviewStatus === 'approved')
+                                        @if ($reviewStatus === 'approved' && ! $isAwardWinner)
                                             <button type="button"
-                                                    @click='composeEmail(@js([
-                                                        "action" => route("admin.applicants.email", $applicant),
+                                                    @click='confirmAward(@js([
+                                                        "action" => route("admin.applications.award-winner", $applicant->application),
                                                         "name" => $applicant->name,
                                                         "email" => $applicant->email,
-                                                    ]), "award")'
+                                                    ]))'
                                                     class="inline-flex items-center gap-1 rounded-md bg-[#d49b2a] px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#b98522]"
-                                                    title="Send award notification to {{ $applicant->name }}">
+                                                    title="Mark {{ $applicant->name }} as an award winner">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4zM7 6H4v2a4 4 0 004 4m9-6h3v2a4 4 0 01-4 4"/>
                                                 </svg>
                                                 Award
+                                            </button>
+                                        @elseif ($isAwardWinner && ! $awardEmailSent)
+                                            <button type="button"
+                                                    @click='composeAwardEmail(@js([
+                                                        "action" => route("admin.applicants.email", $applicant),
+                                                        "name" => $applicant->name,
+                                                        "email" => $applicant->email,
+                                                    ]))'
+                                                    class="inline-flex items-center gap-1 rounded-md bg-[#17458F] px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#123669]"
+                                                    title="Send award email to {{ $applicant->name }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                                Award Email
                                             </button>
                                         @endif
                                     </div>
@@ -235,6 +270,39 @@
             @endif
         </div>
 
+        <!-- Award winner confirmation -->
+        <div x-show="awardConfirmOpen" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div x-show="awardConfirmOpen" x-transition.opacity @click="awardConfirmOpen = false" class="fixed inset-0 bg-black/40"></div>
+
+            <div x-show="awardConfirmOpen" x-transition role="dialog" aria-modal="true" aria-labelledby="award-confirm-title"
+                 class="relative w-full max-w-md rounded-xl bg-white shadow-xl">
+                <div class="px-6 py-6 text-center">
+                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#d49b2a]/15 text-[#b47b13]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4zM7 6H4v2a4 4 0 004 4m9-6h3v2a4 4 0 01-4 4"/>
+                        </svg>
+                    </div>
+                    <h3 id="award-confirm-title" class="mt-4 text-lg font-bold text-gray-900">Mark as award winner?</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-600">
+                        Confirm that <span class="font-semibold text-gray-900" x-text="awardApplicantName"></span>
+                        (<span x-text="awardApplicantEmail"></span>) has been selected for an award.
+                    </p>
+                    <p class="mt-2 text-xs leading-5 text-gray-500">No email will be sent automatically. You can compose and send the award email afterward.</p>
+                </div>
+
+                <form method="POST" :action="awardAction" class="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
+                    @csrf
+                    <button type="button" @click="awardConfirmOpen = false"
+                            class="rounded-md px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">
+                        Cancel
+                    </button>
+                    <button type="submit" class="rounded-md bg-[#d49b2a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b98522]">
+                        Yes, Mark as Winner
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <!-- Award email composer -->
         <div x-show="emailOpen" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div x-show="emailOpen" x-transition.opacity @click="emailOpen = false" class="fixed inset-0 bg-black/40"></div>
@@ -242,8 +310,7 @@
             <div x-show="emailOpen" x-transition class="relative w-full max-w-xl rounded-xl bg-white shadow-xl">
                 <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                     <div>
-                        <h3 class="text-base font-bold text-gray-800"
-                            x-text="emailType === 'award' ? 'Send award notification' : 'Email applicant'"></h3>
+                        <h3 class="text-base font-bold text-gray-800">Send award email</h3>
                         <p class="mt-0.5 text-xs text-gray-500">
                             To <span class="font-semibold" x-text="emailRecipientName"></span>
                             · <span x-text="emailRecipientEmail"></span>
@@ -256,20 +323,11 @@
                     </button>
                 </div>
 
-                <form method="POST" :action="emailAction" class="space-y-4 px-6 py-5"
-                      @submit="if (emailType === 'award' && ! confirm('Send this winning/award notification to the applicant?')) $event.preventDefault()">
+                <form method="POST" :action="emailAction" class="space-y-4 px-6 py-5">
                     @csrf
-                    <input type="hidden" name="message_type" :value="emailType">
-                    <div x-show="emailType === 'award'" class="rounded-lg border border-[#d49b2a]/40 bg-[#d49b2a]/10 p-4">
-                        <label class="flex cursor-pointer items-start gap-3">
-                            <input type="checkbox" name="mark_as_winner" value="1" x-model="emailMarkWinner"
-                                   :required="emailType === 'award'"
-                                   class="mt-0.5 rounded border-gray-300 text-[#d49b2a] focus:ring-[#d49b2a]">
-                            <span>
-                                <span class="block text-sm font-bold text-[#0b3763]">Mark this applicant as an award winner</span>
-                                <span class="mt-0.5 block text-xs leading-5 text-gray-600">This confirmation is required before the winning notification can be sent.</span>
-                            </span>
-                        </label>
+                    <input type="hidden" name="message_type" value="award">
+                    <div class="rounded-lg border border-[#d49b2a]/40 bg-[#d49b2a]/10 p-4 text-sm leading-6 text-gray-700">
+                        This applicant is already marked as an award winner. Review or customize the subject and message before sending.
                     </div>
                     <div>
                         <label for="applicant-email-subject" class="mb-1 block text-xs font-semibold text-gray-600">Subject</label>
@@ -280,14 +338,13 @@
                         <label for="applicant-email-message" class="mb-1 block text-xs font-semibold text-gray-600">Message</label>
                         <textarea id="applicant-email-message" name="message" x-model="emailMessage" required maxlength="10000" rows="10"
                                   class="w-full rounded-md border-gray-300 text-sm leading-6 focus:border-[#17458F] focus:ring-[#17458F]"></textarea>
-                        <p class="mt-1 text-xs text-gray-400">Available placeholders: {name}, {email}, {application_type}, {company_name}</p>
+                        <p class="mt-1 text-xs text-gray-400">Available placeholders: {name}, {email}, {application_type}, {company_name}, {organization_name}, {award_name}</p>
                     </div>
                     <div class="flex justify-end gap-2 border-t border-gray-100 pt-4">
                         <button type="button" @click="emailOpen = false" class="rounded-md px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">Cancel</button>
-                        <button type="submit" :disabled="emailType === 'award' && ! emailMarkWinner"
-                                class="rounded-md px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
-                                :class="emailType === 'award' ? 'bg-[#d49b2a] hover:bg-[#b98522]' : 'bg-[#17458F] hover:bg-[#123669]'"
-                                x-text="emailType === 'award' ? 'Send Award Notification' : 'Send Email'"></button>
+                        <button type="submit" class="rounded-md bg-[#17458F] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#123669]">
+                            Send Award Email
+                        </button>
                     </div>
                 </form>
             </div>

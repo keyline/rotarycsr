@@ -24,20 +24,8 @@ class SendApplicantEmailRequest extends FormRequest
     {
         return [
             'message_type' => ['required', Rule::in(['general', 'award'])],
-            'mark_as_winner' => $this->input('message_type') === 'award'
-                ? ['required', 'accepted']
-                : ['exclude'],
             'subject' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:10000'],
-        ];
-    }
-
-    /** @return array<string, string> */
-    public function messages(): array
-    {
-        return [
-            'mark_as_winner.required' => 'Confirm that this approved applicant is an award winner.',
-            'mark_as_winner.accepted' => 'Confirm that this approved applicant is an award winner.',
         ];
     }
 }

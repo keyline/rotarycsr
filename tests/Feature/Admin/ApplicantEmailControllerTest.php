@@ -57,7 +57,7 @@ class ApplicantEmailControllerTest extends TestCase
         $this->assertStringNotContainsString('<script>', $emailBody);
     }
 
-    public function test_admin_can_send_an_award_notification(): void
+    public function test_admin_can_manually_send_an_award_email_to_a_marked_winner(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
@@ -66,18 +66,27 @@ class ApplicantEmailControllerTest extends TestCase
             'applicant_type' => $applicant->applicant_type,
             'status' => 'submitted',
             'review_status' => 'approved',
+            'award_winner_at' => now(),
+            'award_winner_by' => $admin->id,
         ]);
-        $this->mock(BrevoMailer::class)->shouldReceive('send')->once()->andReturnTrue();
+        $this->mock(BrevoMailer::class)
+            ->shouldReceive('send')
+            ->once()
+            ->withArgs(fn (string $email, string $name, string $subject, string $html): bool => $email === $applicant->email
+                && $name === $applicant->name
+                && $subject === 'Winner notification'
+                && str_contains($html, 'Rotary International District 3291')
+                && str_contains($html, 'Rotary CSR Awards 2026'))
+            ->andReturnTrue();
 
         $response = $this->actingAs($admin)->post(route('admin.applicants.email', $applicant), [
             'message_type' => 'award',
-            'mark_as_winner' => '1',
             'subject' => 'Winner notification',
-            'message' => 'Congratulations {name}!',
+            'message' => "Congratulations {name}!\n{organization_name}\n{award_name}",
         ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('status', 'Award notification sent to '.$applicant->name.'.');
+        $response->assertSessionHas('status', 'Award email sent to '.$applicant->name.'.');
         $this->assertDatabaseHas('activity_logs', [
             'event' => 'admin.award_notification_sent',
             'subject_id' => $applicant->id,
@@ -109,17 +118,16 @@ class ApplicantEmailControllerTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('admin.applicants.email', $applicant), [
             'message_type' => 'award',
-            'mark_as_winner' => '1',
             'subject' => 'Winner notification',
             'message' => 'Congratulations {name}!',
         ]);
 
         $response->assertSessionHasErrors([
-            'message_type' => 'Award notifications can only be sent to approved applicants.',
+            'message_type' => 'Award emails can only be sent to approved applicants.',
         ]);
     }
 
-    public function test_award_notification_requires_winner_confirmation(): void
+    public function test_award_email_requires_the_applicant_to_be_marked_as_a_winner_first(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
@@ -138,12 +146,9 @@ class ApplicantEmailControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'mark_as_winner' => 'Confirm that this approved applicant is an award winner.',
+            'message_type' => 'Mark the applicant as an award winner before sending the award email.',
         ]);
-        $this->assertDatabaseMissing('applications', [
-            'user_id' => $applicant->id,
-            'award_winner_by' => $admin->id,
-        ]);
+        $this->assertNull($applicant->application->fresh()->award_winner_at);
     }
 
     public function test_admin_sees_an_error_when_delivery_fails(): void

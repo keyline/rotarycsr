@@ -23,14 +23,13 @@ class ApplicantEmailController extends Controller
 
         if ($validated['message_type'] === 'award' && $applicant->application?->review_status !== 'approved') {
             throw ValidationException::withMessages([
-                'message_type' => 'Award notifications can only be sent to approved applicants.',
+                'message_type' => 'Award emails can only be sent to approved applicants.',
             ]);
         }
 
-        if ($validated['message_type'] === 'award') {
-            $applicant->application->update([
-                'award_winner_at' => now(),
-                'award_winner_by' => $request->user()->id,
+        if ($validated['message_type'] === 'award' && $applicant->application?->award_winner_at === null) {
+            throw ValidationException::withMessages([
+                'message_type' => 'Mark the applicant as an award winner before sending the award email.',
             ]);
         }
 
@@ -44,13 +43,12 @@ class ApplicantEmailController extends Controller
 
         ActivityLogger::log(
             $validated['message_type'] === 'award' ? 'admin.award_notification_sent' : 'admin.applicant_email_sent',
-            ($validated['message_type'] === 'award' ? 'Award notification' : 'Direct email').' sent to '.$applicant->email.'.',
+            ($validated['message_type'] === 'award' ? 'Award email' : 'Direct email').' sent to '.$applicant->email.'.',
             $applicant,
             [
                 'message_type' => $validated['message_type'],
                 'subject' => $validated['subject'],
                 'sent' => $sent,
-                'marked_as_winner' => $validated['message_type'] === 'award',
             ],
         );
 
@@ -59,7 +57,7 @@ class ApplicantEmailController extends Controller
         }
 
         return back()->with('status', $validated['message_type'] === 'award'
-            ? 'Award notification sent to '.$applicant->name.'.'
+            ? 'Award email sent to '.$applicant->name.'.'
             : 'Email sent to '.$applicant->name.'.');
     }
 }

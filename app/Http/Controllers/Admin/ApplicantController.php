@@ -16,6 +16,9 @@ class ApplicantController extends Controller
     {
         $applicants = $this->filtered($request)
             ->with('application')
+            ->withExists([
+                'emailLogs as award_email_sent' => fn (Builder $query): Builder => $query->where('type', 'award'),
+            ])
             ->orderByDesc('created_at')
             ->paginate(15)
             ->withQueryString();
