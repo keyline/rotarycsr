@@ -224,11 +224,11 @@
                                         </a>
                                         @if ($reviewStatus === 'approved' && ! $isAwardWinner)
                                             <button type="button"
-                                                    @click='confirmAward(@js([
-                                                        "action" => route("admin.applications.award-winner", $applicant->application),
-                                                        "name" => $applicant->name,
-                                                        "email" => $applicant->email,
-                                                    ]))'
+                                                    @click="confirmAward(@js([
+                                                        'action' => route('admin.applications.award-winner', $applicant->application),
+                                                        'name' => $applicant->name,
+                                                        'email' => $applicant->email,
+                                                    ]))"
                                                     class="inline-flex items-center gap-1 rounded-md bg-[#d49b2a] px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#b98522]"
                                                     title="Mark {{ $applicant->name }} as an award winner">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -238,11 +238,11 @@
                                             </button>
                                         @elseif ($isAwardWinner && ! $awardEmailSent)
                                             <button type="button"
-                                                    @click='composeAwardEmail(@js([
-                                                        "action" => route("admin.applicants.email", $applicant),
-                                                        "name" => $applicant->name,
-                                                        "email" => $applicant->email,
-                                                    ]))'
+                                                    @click="composeAwardEmail(@js([
+                                                        'action' => route('admin.applicants.email', $applicant),
+                                                        'name' => $applicant->name,
+                                                        'email' => $applicant->email,
+                                                    ]))"
                                                     class="inline-flex items-center gap-1 rounded-md bg-[#17458F] px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#123669]"
                                                     title="Send award email to {{ $applicant->name }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
