@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ApplicantController;
 use App\Http\Controllers\Admin\ApplicantEmailController;
+use App\Http\Controllers\Admin\ApplicantEmailLogController;
 use App\Http\Controllers\Admin\ApplicationDecisionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SelectedApplicantExportController;
@@ -49,6 +50,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::get('/applicants/export', [ApplicantController::class, 'export'])->name('applicants.export');
     Route::post('/applicants/export-selected', SelectedApplicantExportController::class)->name('applicants.export-selected');
+    Route::get('/applicants/{applicant}/email-logs', ApplicantEmailLogController::class)->name('applicants.email-logs');
     Route::post('/applicants/{applicant}/email', ApplicantEmailController::class)->name('applicants.email');
     Route::get('/applicants/{applicant}', [ApplicantController::class, 'show'])->name('applicants.show');
     Route::patch('/applications/{application}/decision', ApplicationDecisionController::class)->name('applications.decision');

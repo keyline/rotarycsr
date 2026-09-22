@@ -11,8 +11,6 @@
         emailSubject: '',
         emailMessage: '',
         emailMarkWinner: false,
-        emailComposeOpen: false,
-        emailLogs: [],
         selected: [],
         visibleIds: @js($applicants->pluck('id')->values()),
         allSelected() {
@@ -21,28 +19,15 @@
         toggleAll(checked) {
             this.selected = checked ? [...this.visibleIds] : [];
         },
-        openEmailHistory(applicant) {
+        composeEmail(applicant, type) {
             this.emailAction = applicant.action;
+            this.emailType = type;
             this.emailRecipientName = applicant.name;
             this.emailRecipientEmail = applicant.email;
-            this.emailLogs = applicant.logs;
-            this.emailComposeOpen = false;
-            this.emailOpen = true;
-        },
-        startGeneralEmail() {
-            this.emailType = 'general';
-            this.emailSubject = '';
-            this.emailMessage = @js(\App\Services\ApplicantMessageMailer::GENERAL_MESSAGE);
-            this.emailMarkWinner = false;
-            this.emailComposeOpen = true;
-        },
-        composeEmail(applicant, type) {
-            this.openEmailHistory(applicant);
-            this.emailType = type;
             this.emailSubject = type === 'award' ? @js(\App\Services\ApplicantMessageMailer::AWARD_SUBJECT) : '';
             this.emailMessage = type === 'award' ? @js(\App\Services\ApplicantMessageMailer::AWARD_MESSAGE) : @js(\App\Services\ApplicantMessageMailer::GENERAL_MESSAGE);
             this.emailMarkWinner = false;
-            this.emailComposeOpen = true;
+            this.emailOpen = true;
         }
     }" @keydown.escape.window="open = false; emailOpen = false">
         <!-- Filters -->
@@ -136,15 +121,6 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($applicants as $applicant)
-                            @php
-                                $emailLogPayload = $applicant->emailLogs->map(fn (\App\Models\ApplicantEmailLog $emailLog): array => [
-                                    'type' => $emailLog->type,
-                                    'typeLabel' => ucfirst(str_replace('_', ' ', $emailLog->type)),
-                                    'subject' => $emailLog->subject,
-                                    'body' => $emailLog->bodyAsText(),
-                                    'sentAt' => $emailLog->sent_at->format('d M Y, h:i A'),
-                                ])->values()->all();
-                            @endphp
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-2.5">
                                     <input type="checkbox" value="{{ $applicant->id }}" x-model.number="selected"
@@ -215,27 +191,22 @@
                                             </svg>
                                             View
                                         </button>
-                                        <button type="button"
-                                                @click='openEmailHistory(@js([
-                                                    "action" => route("admin.applicants.email", $applicant),
-                                                    "name" => $applicant->name,
-                                                    "email" => $applicant->email,
-                                                    "logs" => $emailLogPayload,
-                                                ]))'
-                                                class="inline-flex items-center gap-1 rounded-md border border-[#17458F]/30 px-2.5 py-1.5 text-xs font-semibold text-[#17458F] transition hover:bg-[#17458F]/5"
-                                                title="View email history for {{ $applicant->name }}">
+                                        <a href="{{ route('admin.applicants.email-logs', $applicant) }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 rounded-md border border-[#17458F]/30 px-2.5 py-1.5 text-xs font-semibold text-[#17458F] transition hover:bg-[#17458F]/5"
+                                           title="Open email history for {{ $applicant->name }} in a new tab">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                             </svg>
                                             Email
-                                        </button>
+                                        </a>
                                         @if ($reviewStatus === 'approved')
                                             <button type="button"
                                                     @click='composeEmail(@js([
                                                         "action" => route("admin.applicants.email", $applicant),
                                                         "name" => $applicant->name,
                                                         "email" => $applicant->email,
-                                                        "logs" => $emailLogPayload,
                                                     ]), "award")'
                                                     class="inline-flex items-center gap-1 rounded-md bg-[#d49b2a] px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#b98522]"
                                                     title="Send award notification to {{ $applicant->name }}">
@@ -264,15 +235,15 @@
             @endif
         </div>
 
-        <!-- Email history and composer -->
+        <!-- Award email composer -->
         <div x-show="emailOpen" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div x-show="emailOpen" x-transition.opacity @click="emailOpen = false" class="fixed inset-0 bg-black/40"></div>
 
-            <div x-show="emailOpen" x-transition class="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-white shadow-xl">
+            <div x-show="emailOpen" x-transition class="relative w-full max-w-xl rounded-xl bg-white shadow-xl">
                 <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                     <div>
                         <h3 class="text-base font-bold text-gray-800"
-                            x-text="emailComposeOpen ? (emailType === 'award' ? 'Send award notification' : 'Email applicant') : 'Email history'"></h3>
+                            x-text="emailType === 'award' ? 'Send award notification' : 'Email applicant'"></h3>
                         <p class="mt-0.5 text-xs text-gray-500">
                             To <span class="font-semibold" x-text="emailRecipientName"></span>
                             · <span x-text="emailRecipientEmail"></span>
@@ -285,48 +256,7 @@
                     </button>
                 </div>
 
-                <div x-show="! emailComposeOpen" class="overflow-y-auto px-6 py-5">
-                    <div class="mb-4 flex items-center justify-between gap-3">
-                        <p class="text-sm font-semibold text-gray-700">
-                            <span x-text="emailLogs.length"></span>
-                            sent email<span x-show="emailLogs.length !== 1">s</span>
-                        </p>
-                        <button type="button" @click="startGeneralEmail()"
-                                class="rounded-md bg-[#17458F] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#123669]">
-                            Compose Email
-                        </button>
-                    </div>
-
-                    <template x-if="emailLogs.length === 0">
-                        <div class="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center">
-                            <p class="text-sm font-semibold text-gray-600">No emails sent yet</p>
-                            <p class="mt-1 text-xs text-gray-400">Approved, rejected, blacklisted, award, and direct emails will appear here after successful delivery.</p>
-                        </div>
-                    </template>
-
-                    <div x-show="emailLogs.length > 0" class="space-y-3">
-                        <template x-for="(emailLog, index) in emailLogs" :key="`${emailLog.sentAt}-${index}`">
-                            <article class="rounded-lg border border-gray-200 p-4">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                                          :class="{
-                                              'bg-green-50 text-green-700': emailLog.type === 'approved',
-                                              'bg-red-50 text-red-700': emailLog.type === 'rejected',
-                                              'bg-gray-900 text-white': emailLog.type === 'blacklisted',
-                                              'bg-[#d49b2a]/10 text-[#9a6b0d]': emailLog.type === 'award',
-                                              'bg-[#17458F]/10 text-[#17458F]': emailLog.type === 'general',
-                                          }"
-                                          x-text="emailLog.typeLabel"></span>
-                                    <time class="text-xs text-gray-400" x-text="emailLog.sentAt"></time>
-                                </div>
-                                <h4 class="mt-3 break-words text-sm font-bold text-gray-800" x-text="emailLog.subject"></h4>
-                                <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-gray-600" x-text="emailLog.body"></p>
-                            </article>
-                        </template>
-                    </div>
-                </div>
-
-                <form x-show="emailComposeOpen" method="POST" :action="emailAction" class="space-y-4 overflow-y-auto px-6 py-5"
+                <form method="POST" :action="emailAction" class="space-y-4 px-6 py-5"
                       @submit="if (emailType === 'award' && ! confirm('Send this winning/award notification to the applicant?')) $event.preventDefault()">
                     @csrf
                     <input type="hidden" name="message_type" :value="emailType">
@@ -353,7 +283,7 @@
                         <p class="mt-1 text-xs text-gray-400">Available placeholders: {name}, {email}, {application_type}, {company_name}</p>
                     </div>
                     <div class="flex justify-end gap-2 border-t border-gray-100 pt-4">
-                        <button type="button" @click="emailComposeOpen = false" class="rounded-md px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">Back to history</button>
+                        <button type="button" @click="emailOpen = false" class="rounded-md px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">Cancel</button>
                         <button type="submit" :disabled="emailType === 'award' && ! emailMarkWinner"
                                 class="rounded-md px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
                                 :class="emailType === 'award' ? 'bg-[#d49b2a] hover:bg-[#b98522]' : 'bg-[#17458F] hover:bg-[#123669]'"

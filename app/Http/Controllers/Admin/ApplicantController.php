@@ -15,7 +15,7 @@ class ApplicantController extends Controller
     public function index(Request $request): View
     {
         $applicants = $this->filtered($request)
-            ->with(['application', 'emailLogs'])
+            ->with('application')
             ->orderByDesc('created_at')
             ->paginate(15)
             ->withQueryString();
