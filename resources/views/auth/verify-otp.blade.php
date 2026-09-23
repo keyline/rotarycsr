@@ -10,14 +10,15 @@
         </div>
     @endif
 
-    @if ($debugOtp)
-        <div class="mb-4 px-3 py-2 text-sm bg-yellow-50 border border-yellow-300 text-yellow-800 rounded-md">
-            Brevo isn't configured yet, so email couldn't be sent. Debug code: <span class="font-mono font-bold">{{ $debugOtp }}</span>
-        </div>
-    @endif
-
     <form method="POST" action="{{ route('verification.otp') }}">
         @csrf
+
+        @if ($debugOtp)
+            <div class="mb-4 rounded-md border border-yellow-300 bg-yellow-50 px-3 py-2 text-center text-yellow-800">
+                <span class="block text-xs font-semibold uppercase tracking-wide">Your verification code</span>
+                <strong class="mt-1 block font-mono text-xl tracking-[0.35em]">{{ $debugOtp }}</strong>
+            </div>
+        @endif
 
         <div>
             <x-input-label for="otp" :value="__('Verification Code')" />

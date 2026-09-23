@@ -15,7 +15,7 @@ class OtpService
 
     /**
      * Generate a fresh OTP for the user, store its hash, and email it.
-     * Returns the plain OTP only when the email could not be sent (local debug fallback).
+     * Returns the plain OTP in debug mode or when email delivery fails.
      */
     public function issue(User $user): ?string
     {
@@ -33,7 +33,7 @@ class OtpService
             $this->emailBody($user->name, $otp)
         );
 
-        return $sent ? null : $otp;
+        return (config('app.debug') || ! $sent) ? $otp : null;
     }
 
     public function verify(User $user, string $otp): bool
