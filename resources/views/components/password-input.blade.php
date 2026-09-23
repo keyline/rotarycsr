@@ -8,12 +8,13 @@
         @disabled($disabled)
         type="password"
         x-bind:type="passwordVisible ? 'text' : 'password'"
-        {{ $attributes->merge(['class' => 'w-full rounded-xl border-slate-300 bg-white/90 pr-12 shadow-sm focus:border-rotary-gold focus:ring-rotary-gold']) }}
+        {{ $attributes->merge(['class' => 'password-toggle-input w-full rounded-xl border-slate-300 bg-white/90 pr-12 shadow-sm focus:border-rotary-gold focus:ring-rotary-gold']) }}
     >
 
     <button
         type="button"
-        class="absolute inset-y-0 right-0 inline-flex w-12 items-center justify-center rounded-r-xl text-slate-500 transition hover:text-rotary-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-rotary-gold"
+        class="absolute right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/50 hover:text-rotary-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-rotary-gold"
+        style="top: 50%; transform: translateY(-50%);"
         x-on:click="passwordVisible = ! passwordVisible"
         aria-label="{{ __('Show password') }}"
         x-bind:aria-label='passwordVisible ? @js(__('Hide password')) : @js(__('Show password'))'
