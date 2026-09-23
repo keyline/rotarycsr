@@ -45,28 +45,13 @@
                 </div>
             </section>
 
-            <section class="bg-rotary-ivory px-5 py-20 sm:px-8">
+            <!-- <section class="bg-rotary-ivory px-5 py-20 sm:px-8">
                 <div class="mx-auto max-w-6xl">
                     <div class="text-center">
                         <p class="award-rule award-kicker">Award Categories</p>
                         <h2 class="mt-5 font-display text-4xl font-bold sm:text-5xl">Two paths. One shared purpose.</h2>
                     </div>
                     <div class="mt-12 grid gap-6 md:grid-cols-2">
-                        <a href="{{ route('register', ['type' => 'corporate']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
-                            <div class="flex items-center gap-5">
-                                <img src="{{ asset('images/category-corporate-navy.png') }}"
-                                     alt="CSR Project Excellence category icon"
-                                     class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/40"
-                                     width="80"
-                                     height="80">
-                                <div class="min-w-0">
-                                    <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category II</span>
-                                    <h3 class="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">CSR Project Excellence</h3>
-                                </div>
-                            </div>
-                            <p class="mt-6 max-w-md text-sm leading-6 text-white/70">Honouring organisations and foundations delivering exemplary projects across Rotary's areas of focus.</p>
-                            <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an organisation <span class="transition group-hover:translate-x-1">→</span></span>
-                        </a>
                         <a href="{{ route('register', ['type' => 'individual']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
                             <div class="flex items-center gap-5">
                                 <img src="{{ asset('images/category-leader-navy.png') }}"
@@ -82,9 +67,24 @@
                             <p class="mt-6 max-w-md text-sm leading-6 text-white/70">Recognising individual CSR and ESG leaders whose vision has built measurable, lasting impact.</p>
                             <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an individual <span class="transition group-hover:translate-x-1">→</span></span>
                         </a>
+                        <a href="{{ route('register', ['type' => 'corporate']) }}" class="group award-card relative overflow-hidden bg-rotary-navy p-8 text-white sm:p-10">
+                            <div class="flex items-center gap-5">
+                                <img src="{{ asset('images/category-corporate-navy.png') }}"
+                                     alt="CSR Project Excellence category icon"
+                                     class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/40"
+                                     width="80"
+                                     height="80">
+                                <div class="min-w-0">
+                                    <span class="text-sm font-bold uppercase tracking-[0.2em] text-rotary-gold">Category II</span>
+                                    <h3 class="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">CSR Project Excellence</h3>
+                                </div>
+                            </div>
+                            <p class="mt-6 max-w-md text-sm leading-6 text-white/70">Honouring organisations and foundations delivering exemplary projects across Rotary's areas of focus.</p>
+                            <span class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-rotary-gold">Apply as an organisation <span class="transition group-hover:translate-x-1">→</span></span>
+                        </a>
                     </div>
                 </div>
-            </section>
+            </section> -->
         </main>
 
         <footer class="w-full bg-rotary-navy px-6 py-8 text-white/60">

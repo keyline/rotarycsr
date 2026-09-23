@@ -33,29 +33,6 @@
                 </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
-                    <a href="{{ route('register', ['type' => 'corporate']) }}"
-                       class="group award-card flex flex-col p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
-                        <div class="flex items-center gap-5">
-                            <img src="{{ asset('images/category-corporate-navy.png') }}"
-                                 alt="Corporate CSR project excellence"
-                                 class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30"
-                                 width="80"
-                                 height="80">
-                            <div class="min-w-0">
-                                <p class="award-kicker">Category II</p>
-                                <h2 class="mt-1 font-display text-2xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">CSR Project Excellence</h2>
-                            </div>
-                        </div>
-                        <p class="mt-5 text-sm leading-6 text-slate-600">
-                            For corporates and foundations recognising a CSR project implemented in FY 2025-26 —
-                            Small, Medium, or Large category based on annual CSR spend.
-                        </p>
-                        <span class="mt-auto inline-flex items-center pt-5 text-sm font-bold text-rotary-blue">
-                            Apply as an organisation
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                        </span>
-                    </a>
-
                     <a href="{{ route('register', ['type' => 'individual']) }}"
                        class="group award-card flex flex-col p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
                         <div class="flex items-center gap-5">
@@ -78,6 +55,29 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                         </span>
                     </a>
+                    
+                    <a href="{{ route('register', ['type' => 'corporate']) }}"
+                       class="group award-card flex flex-col p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
+                        <div class="flex items-center gap-5">
+                            <img src="{{ asset('images/category-corporate-navy.png') }}"
+                                 alt="Corporate CSR project excellence"
+                                 class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30"
+                                 width="80"
+                                 height="80">
+                            <div class="min-w-0">
+                                <p class="award-kicker">Category II</p>
+                                <h2 class="mt-1 font-display text-2xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">CSR Project Excellence</h2>
+                            </div>
+                        </div>
+                        <p class="mt-5 text-sm leading-6 text-slate-600">
+                            For corporates and foundations recognising a CSR project implemented in FY 2025-26 —
+                            Small, Medium, or Large category based on annual CSR spend.
+                        </p>
+                        <span class="mt-auto inline-flex items-center pt-5 text-sm font-bold text-rotary-blue">
+                            Apply as an organisation
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </span>
+                    </a>                    
                 </div>
 
                 <p class="mt-8 text-center text-sm text-white/70">
