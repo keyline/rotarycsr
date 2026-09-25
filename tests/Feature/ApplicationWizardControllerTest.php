@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Mail\TransactionalMessage;
 use App\Models\Application;
 use App\Models\ApplicationSupportingDocument;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -541,6 +543,42 @@ class ApplicationWizardControllerTest extends TestCase
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSeeText('RICSR/CP/0001');
+    }
+
+    public function test_submission_emails_the_applicant_and_all_administrators(): void
+    {
+        Mail::fake();
+        $application = $this->completeCorporateApplication();
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin@example.com',
+        ]);
+
+        $response = $this->actingAs($application->user)->post(route('application.submit'));
+
+        $response->assertRedirect(route('dashboard'));
+        $this->assertDatabaseHas('applications', [
+            'id' => $application->id,
+            'status' => 'submitted',
+        ]);
+        Mail::assertSent(TransactionalMessage::class, 2);
+        Mail::assertSent(TransactionalMessage::class, function (TransactionalMessage $message) use ($application): bool {
+            return $message->hasTo($application->user->email)
+                && $message->messageSubject === 'Your Rotary CSR Awards application has been submitted';
+        });
+        Mail::assertSent(TransactionalMessage::class, function (TransactionalMessage $message) use ($admin): bool {
+            return $message->hasTo($admin->email)
+                && $message->messageSubject === 'New Rotary CSR Awards application: RICSR/CP/0001';
+        });
+    }
+
+    public function test_review_page_shows_the_final_progress_badge_in_blue(): void
+    {
+        $application = $this->completeCorporateApplication();
+
+        $response = $this->actingAs($application->user)->get(route('application.review'));
+
+        $response->assertSee('bg-rotary-blue', false);
     }
 
     /** @return array{User, Application} */
