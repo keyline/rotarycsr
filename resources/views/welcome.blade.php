@@ -35,14 +35,17 @@
                     <a href="{{ route('login') }}" class="block rounded-lg px-3 py-3 text-sm font-semibold text-rotary-navy hover:bg-rotary-ivory">Continue Application</a>
                 @endauth
             </nav>
-            <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8 lg:pt-20">
-                <x-site-logo class="h-auto w-40 shrink-0 sm:w-72 lg:w-96" />
+            <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
+                <div class="flex flex-col items-start">
+                    <x-site-logo class="h-auto w-60 shrink-0 lg:w-64" />
+                    <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
+                </div>
             </div>
         </header>
 
         <main class="flex-1">
-            <section class="award-hero home-hero relative flex min-h-[calc(100svh-92px)] items-start sm:min-h-[680px] sm:items-center sm:pt-40 lg:pt-32" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
-                <div class="relative z-10 mx-auto w-full max-w-7xl px-5 pb-44 pt-7 sm:px-8 sm:py-10">
+            <section class="award-hero home-hero relative flex min-h-[calc(100svh-92px)] items-start sm:min-h-[680px] sm:items-center sm:pt-40 lg:min-h-[665px] lg:items-start lg:pt-0" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+                <div class="relative z-10 mx-auto w-full max-w-7xl px-5 pb-12 pt-7 sm:px-8 sm:py-10 lg:max-w-[1080px] lg:pt-8">
                     <div class="mx-auto flex max-w-xl flex-col items-center text-center sm:mx-0 sm:block sm:text-left">
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
                         <p class="max-w-[290px] text-sm font-bold uppercase leading-snug tracking-[0.08em] text-[#ad7c28] sm:mb-2 sm:max-w-none sm:pl-2 sm:text-[11px] sm:tracking-[0.12em] sm:text-rotary-gold">
@@ -50,7 +53,7 @@
                         </p>
                         <img src="{{ asset('images/rotary-csr-awards-2026-tight.png') }}"
                              alt="Rotary CSR Awards 2026"
-                             class="-mt-2 h-auto w-full max-w-[245px] sm:-mt-5 sm:max-w-[370px]"
+                             class="-mt-2 h-auto w-full max-w-[205px] sm:-mt-5 sm:max-w-[310px]"
                              width="1246"
                              height="1263">
                         <div class="mb-4 hidden h-1 w-16 bg-rotary-gold sm:block"></div>
