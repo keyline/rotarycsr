@@ -111,26 +111,24 @@
 
         <!-- Table -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div class="overflow-x-hidden">
-                <table class="w-full table-fixed text-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[1360px] table-fixed text-[13px]">
                     <thead class="border-b border-gray-200 bg-gray-50">
                         <tr>
-                            <th class="w-8 px-1 py-2.5 text-left sm:w-10 sm:px-2">
+                            <th class="w-10 px-3 py-2.5 text-left">
                                 <input type="checkbox" aria-label="Select all applicants on this page"
                                        :checked="allSelected()" @change="toggleAll($event.target.checked)"
                                        class="rounded border-gray-300 text-[#17458F] focus:ring-[#17458F]">
                             </th>
-                            <th class="w-24 px-1 py-2.5 text-left text-xs font-medium text-gray-500 sm:w-28 sm:px-2">Application Number</th>
-                            <th class="px-1 py-2.5 text-left font-medium text-gray-500 sm:px-2">
-                                <span class="lg:hidden">Applicant</span>
-                                <span class="hidden lg:inline">Name</span>
-                            </th>
-                            <th class="hidden px-2 py-2.5 text-left font-medium text-gray-500 lg:table-cell">Email</th>
-                            <th class="hidden w-20 px-2 py-2.5 text-left font-medium text-gray-500 lg:table-cell">Category</th>
-                            <th class="hidden w-20 px-2 py-2.5 text-left font-medium text-gray-500 lg:table-cell">Status</th>
-                            <th class="hidden w-24 px-2 py-2.5 text-left font-medium text-gray-500 lg:table-cell">Review</th>
-                            <th class="hidden w-24 px-2 py-2.5 text-left font-medium text-gray-500 lg:table-cell">Registered</th>
-                            <th class="w-24 px-1 py-2.5 text-right font-medium text-gray-500 sm:w-28 sm:px-2">Actions</th>
+                            <th class="w-40 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Application Number</th>
+                            <th class="w-36 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Name</th>
+                            <th class="w-36 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Company</th>
+                            <th class="w-56 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Email</th>
+                            <th class="w-28 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Category</th>
+                            <th class="w-28 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Status</th>
+                            <th class="w-28 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Review</th>
+                            <th class="w-28 px-3 py-2.5 text-left text-xs font-semibold text-gray-500">Registered</th>
+                            <th class="w-44 px-3 py-2.5 text-right text-xs font-semibold text-gray-500">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -151,54 +149,45 @@
                             <tr data-applicant-row="{{ $applicant->id }}"
                                 data-award-complete="{{ $awardComplete ? 'true' : 'false' }}"
                                 class="transition {{ $awardComplete ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50' }}">
-                                <td class="px-1 py-2.5 align-top sm:px-2">
+                                <td class="px-3 py-2 align-middle">
                                     <input type="checkbox" value="{{ $applicant->id }}" x-model.number="selected"
                                            aria-label="Select {{ $applicant->name }}"
                                            class="rounded border-gray-300 text-[#17458F] focus:ring-[#17458F]">
                                 </td>
-                                <td class="break-words px-1 py-2.5 align-top sm:px-2">
+                                <td class="whitespace-nowrap px-3 py-2 align-middle">
                                     <span class="font-semibold text-[#17458F]">{{ $applicant->application?->reference_number ?: '—' }}</span>
                                 </td>
-                                <td class="min-w-0 px-1 py-2.5 align-top sm:px-2">
-                                    <div class="font-medium text-gray-800">{{ $applicant->name }}</div>
-                                    @if ($applicant->company_name)
-                                        <div class="text-xs text-gray-400">{{ $applicant->company_name }}</div>
-                                    @endif
-                                    <div class="mt-1 space-y-1 text-xs text-gray-500 lg:hidden">
-                                        <div class="break-all">{{ $applicant->email }}</div>
-                                        <div>{{ ucfirst($applicant->applicant_type ?? '—') }}</div>
-                                        <div>
-                                            {{ $applicant->email_verified_at ? 'Verified' : 'Pending' }}
-                                            · {{ $reviewStatus === 'not_started' ? 'Not started' : ucfirst($reviewStatus) }}
-                                        </div>
-                                        <div>{{ $applicant->created_at->format('d M Y') }}</div>
-                                    </div>
+                                <td class="min-w-0 px-3 py-2 align-middle">
+                                    <div class="truncate font-medium text-gray-800" title="{{ $applicant->name }}">{{ $applicant->name }}</div>
                                 </td>
-                                <td class="hidden min-w-0 break-all px-2 py-2.5 text-gray-600 lg:table-cell">
-                                    {{ $applicant->email }}
+                                <td class="min-w-0 px-3 py-2 align-middle text-gray-600">
+                                    <div class="truncate" title="{{ $applicant->company_name ?: '—' }}">{{ $applicant->company_name ?: '—' }}</div>
                                 </td>
-                                <td class="hidden px-2 py-2.5 lg:table-cell">
-                                    <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full {{ $applicant->applicant_type === 'corporate' ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
+                                <td class="min-w-0 px-3 py-2 align-middle text-gray-600">
+                                    <div class="truncate" title="{{ $applicant->email }}">{{ $applicant->email }}</div>
+                                </td>
+                                <td class="px-3 py-2 align-middle">
+                                    <span class="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium {{ $applicant->applicant_type === 'corporate' ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
                                         {{ ucfirst($applicant->applicant_type ?? '—') }}
                                     </span>
                                 </td>
-                                <td class="hidden px-2 py-2.5 lg:table-cell">
+                                <td class="px-3 py-2 align-middle">
                                     @if ($applicant->email_verified_at)
                                         <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700">Verified</span>
                                     @else
                                         <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700">Pending</span>
                                     @endif
                                 </td>
-                                <td class="hidden px-2 py-2.5 lg:table-cell">
+                                <td class="px-3 py-2 align-middle">
                                     <span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium {{ $reviewClasses }}">
                                         {{ $reviewStatus === 'not_started' ? 'Not started' : ucfirst($reviewStatus) }}
                                     </span>
                                 </td>
-                                <td class="hidden px-2 py-2.5 text-gray-500 lg:table-cell">
+                                <td class="whitespace-nowrap px-3 py-2 align-middle text-gray-500">
                                     {{ $applicant->created_at->format('d M Y') }}
                                 </td>
-                                <td class="px-1 py-2.5 text-right align-top sm:px-2">
-                                    <div class="flex flex-col items-stretch gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+                                <td class="px-3 py-2 text-right align-middle">
+                                    <div class="flex flex-wrap items-center justify-end gap-1">
                                         @if ($isAwardWinner)
                                             <span class="inline-flex rounded-full bg-[#d49b2a]/15 px-2.5 py-1 text-xs font-semibold text-[#8a5d08]">
                                                 Award Winner
@@ -270,7 +259,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="px-4 py-8 text-center text-gray-400">No applicants found.</td>
+                                <td colspan="10" class="px-4 py-8 text-center text-gray-400">No applicants found.</td>
                             </tr>
                         @endforelse
                     </tbody>
