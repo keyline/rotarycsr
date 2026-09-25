@@ -421,6 +421,29 @@ class ApplicationWizardControllerTest extends TestCase
         $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
     }
 
+    public function test_supporting_file_larger_than_five_megabytes_is_rejected(): void
+    {
+        Storage::fake('local');
+        [$applicant, $application] = $this->corporateApplicationAtStep(4);
+
+        $response = $this->actingAs($applicant)
+            ->from(route('application.step', 4))
+            ->post(route('application.step', 4), array_merge($this->validProjectDetails(), [
+                'supporting_documents' => [UploadedFile::fake()->create('large-video.mp4', 5001, 'video/mp4')],
+            ]));
+
+        $response->assertRedirect(route('application.step', 4));
+        $response->assertSessionHasErrors([
+            'supporting_documents.0' => 'The supporting documents.0 field must not be greater than 5000 kilobytes.',
+        ]);
+        $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
+        $this->assertDatabaseHas('applications', [
+            'id' => $application->id,
+            'current_step' => 4,
+            'project_name' => null,
+        ]);
+    }
+
     public function test_supporting_media_download_is_limited_to_the_owner_and_admin(): void
     {
         Storage::fake('local');

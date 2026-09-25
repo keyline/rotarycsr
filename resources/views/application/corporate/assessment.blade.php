@@ -107,7 +107,7 @@
 
     <section class="border-t border-gray-100 pt-6">
         <h3 class="font-display text-xl font-bold text-rotary-navy">Supporting Documents / Proof</h3>
-        <p class="mt-1 text-sm leading-6 text-gray-500">Upload up to 10 project-related images or videos. Each file may be up to 50 MB.</p>
+        <p class="mt-1 text-sm leading-6 text-gray-500">Upload up to 10 project-related images or videos. Each file may be up to 5 MB.</p>
         <input id="supporting_documents" name="supporting_documents[]" type="file" multiple
                accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm"
                class="mt-4 block w-full text-sm text-gray-600 file:mr-4 file:rounded-md file:border-0 file:bg-[#17458F] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#123669]" />
