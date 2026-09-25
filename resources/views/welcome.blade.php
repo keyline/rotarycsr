@@ -13,8 +13,7 @@
     <style>
         .home-mobile-header { min-height: 92px; }
         .home-header-logo-mobile { width: min(225px, calc(100vw - 100px)); height: auto; }
-        .home-header-logo-desktop { width: 232px; height: auto; }
-        .home-desktop-district { display: none; }
+        .home-hero-desktop-logo { display: none; }
         .home-hero {
             min-height: calc(100svh - 92px);
             background-image: linear-gradient(90deg, rgba(255, 250, 240, .7), rgba(255, 250, 240, .05) 85%), var(--award-background-image);
@@ -44,34 +43,48 @@
             .home-hero .award-button-gold { background-image: none; }
         }
         @media (min-width: 1024px) {
+            .home-site-header { display: none; }
             .home-hero { min-height: 665px; align-items: flex-start; padding-top: 0; }
-            .home-hero-inner { max-width: 1080px; padding-top: 2.5rem; }
+            .home-hero-inner {
+                max-width: none;
+                margin: 0;
+                padding: 2.5rem clamp(2rem, 6vw, 7.5rem);
+            }
+            .home-hero-content { display: block; max-width: 36rem; margin: 0; text-align: left; }
+            .home-hero-desktop-logo {
+                display: block;
+                position: absolute;
+                top: 2.5rem;
+                right: clamp(2rem, 5vw, 6rem);
+                z-index: 2;
+                width: 232px;
+            }
+            .home-hero-actions { display: flex; flex-direction: row; align-items: center; }
             .home-hero-title { font-size: 2rem; }
             .home-hero-description { font-size: 1rem; line-height: 1.5; }
-            .home-desktop-district { display: block; }
         }
     </style>
 </head>
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
-        <header class="relative z-20 w-full bg-white sm:absolute sm:inset-x-0 sm:top-0 sm:bg-transparent">
+        <header class="home-site-header relative z-20 w-full bg-white sm:absolute sm:inset-x-0 sm:top-0 sm:bg-transparent">
             <div class="home-mobile-header flex min-h-[92px] items-center px-5 py-2 sm:hidden">
                 <a href="{{ url('/') }}" class="flex min-w-0 flex-col items-start" aria-label="Rotary District 3291 home">
                     <x-site-logo class="home-header-logo-mobile block h-auto w-[225px] max-w-full" />
                 </a>
             </div>
             <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
-                <div class="flex flex-col items-start">
-                    <x-site-logo class="home-header-logo-desktop h-auto w-60 shrink-0 lg:w-64" />
-                    <span class="home-desktop-district pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
-                </div>
+                <x-site-logo class="h-auto w-60 shrink-0" />
             </div>
         </header>
 
         <main class="flex-1">
             <section class="award-hero home-hero relative flex min-h-[calc(100svh-92px)] items-start sm:min-h-[680px] sm:items-center sm:pt-40 lg:min-h-[665px] lg:items-start lg:pt-0" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+                <a href="{{ url('/') }}" class="home-hero-desktop-logo" aria-label="Rotary District 3291 home">
+                    <x-site-logo class="block h-auto w-full" />
+                </a>
                 <div class="home-hero-inner relative z-10 mx-auto w-full max-w-7xl px-5 pb-12 pt-7 sm:px-8 sm:py-10 lg:max-w-[1080px] lg:pt-8">
-                    <div class="mx-auto flex max-w-xl flex-col items-center text-center sm:mx-0 sm:block sm:text-left">
+                    <div class="home-hero-content mx-auto flex max-w-xl flex-col items-center text-center sm:mx-0 sm:block sm:text-left">
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
                         <p class="home-hero-kicker max-w-full text-xs font-bold uppercase leading-snug tracking-[0.02em] text-[#ad7c28] sm:mb-2 sm:max-w-none sm:pl-2 sm:tracking-[0.12em] sm:text-rotary-gold">
                             Rotary International District 3291 presents
