@@ -434,7 +434,7 @@ class ApplicationWizardControllerTest extends TestCase
         $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
     }
 
-    public function test_supporting_file_larger_than_five_megabytes_is_rejected(): void
+    public function test_supporting_image_larger_than_100_kilobytes_is_rejected(): void
     {
         Storage::fake('local');
         [$applicant, $application] = $this->corporateApplicationAtStep(4);
@@ -442,12 +442,12 @@ class ApplicationWizardControllerTest extends TestCase
         $response = $this->actingAs($applicant)
             ->from(route('application.step', 4))
             ->post(route('application.step', 4), array_merge($this->validProjectDetails(), [
-                'supporting_documents' => [UploadedFile::fake()->create('large-video.mp4', 5001, 'video/mp4')],
+                'supporting_documents' => [UploadedFile::fake()->image('large-image.jpg')->size(101)],
             ]));
 
         $response->assertRedirect(route('application.step', 4));
         $response->assertSessionHasErrors([
-            'supporting_documents.0' => 'The supporting documents.0 field must not be greater than 5000 kilobytes.',
+            'supporting_documents.0' => 'The supporting documents.0 field must not be greater than 100 KB.',
         ]);
         $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
         $this->assertDatabaseHas('applications', [
@@ -459,7 +459,44 @@ class ApplicationWizardControllerTest extends TestCase
         $this->actingAs($applicant)
             ->get(route('application.step', 4))
             ->assertOk()
-            ->assertSeeText('The supporting documents.0 field must not be greater than 5000 kilobytes.');
+            ->assertSeeText('The supporting documents.0 field must not be greater than 100 KB.');
+    }
+
+    public function test_supporting_media_at_each_size_limit_is_accepted(): void
+    {
+        Storage::fake('local');
+        [$applicant, $application] = $this->corporateApplicationAtStep(4);
+
+        $response = $this->actingAs($applicant)->post(route('application.step', 4), array_merge(
+            $this->validProjectDetails(),
+            [
+                'supporting_documents' => [
+                    UploadedFile::fake()->image('image.jpg')->size(100),
+                    UploadedFile::fake()->create('video.mp4', 2048, 'video/mp4'),
+                ],
+            ],
+        ));
+
+        $response->assertRedirect(route('application.step', 5));
+        $this->assertCount(2, $application->fresh()->supportingDocuments);
+    }
+
+    public function test_supporting_video_larger_than_two_megabytes_is_rejected(): void
+    {
+        Storage::fake('local');
+        [$applicant, $application] = $this->corporateApplicationAtStep(4);
+
+        $response = $this->actingAs($applicant)
+            ->from(route('application.step', 4))
+            ->post(route('application.step', 4), array_merge($this->validProjectDetails(), [
+                'supporting_documents' => [UploadedFile::fake()->create('large-video.mp4', 2049, 'video/mp4')],
+            ]));
+
+        $response->assertRedirect(route('application.step', 4));
+        $response->assertSessionHasErrors([
+            'supporting_documents.0' => 'The supporting documents.0 field must not be greater than 2 MB.',
+        ]);
+        $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
     }
 
     public function test_failed_supporting_file_upload_returns_validation_error(): void
@@ -542,7 +579,10 @@ class ApplicationWizardControllerTest extends TestCase
         $this->actingAs($firstCorporate->user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSeeText('RICSR/CP/0001');
+            ->assertSeeText('RICSR/CP/0001')
+            ->assertSeeText('Thank you for your submission')
+            ->assertDontSeeText('Welcome,')
+            ->assertDontSeeText('Your application has been submitted successfully.');
     }
 
     public function test_submission_emails_the_applicant_and_all_administrators(): void
@@ -572,13 +612,25 @@ class ApplicationWizardControllerTest extends TestCase
         });
     }
 
-    public function test_review_page_shows_the_final_progress_badge_in_blue(): void
+    public function test_review_page_shows_the_final_progress_badge_as_current_until_submission(): void
     {
         $application = $this->completeCorporateApplication();
 
         $response = $this->actingAs($application->user)->get(route('application.review'));
 
-        $response->assertSee('bg-rotary-blue', false);
+        $response->assertSee('aria-label="Review &amp; Submit: Current"', false);
+        $response->assertSee('bg-rotary-gold text-rotary-navy', false);
+    }
+
+    public function test_submitted_review_page_shows_every_progress_badge_as_completed(): void
+    {
+        $application = $this->completeCorporateApplication();
+        $this->actingAs($application->user)->post(route('application.submit'));
+
+        $response = $this->get(route('application.review'));
+
+        $response->assertSee('aria-label="Review &amp; Submit: Completed"', false);
+        $this->assertSame(5, substr_count($response->getContent(), 'bg-rotary-blue text-white'));
     }
 
     /** @return array{User, Application} */

@@ -67,8 +67,7 @@ class ApplicationWizardController extends Controller
             $rules['supporting_documents.*'] = [
                 'bail',
                 File::types([])
-                    ->extensions(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm'])
-                    ->max('5mb'),
+                    ->extensions(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm']),
                 new SupportingMediaFile,
             ];
         }

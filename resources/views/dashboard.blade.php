@@ -15,14 +15,15 @@
     <div class="py-10 sm:py-14">
         <div class="mx-auto flex max-w-3xl flex-col gap-6 sm:px-6 lg:px-8">
 
-            @if (session('status'))
+            @if (session('status') && ! $application->isSubmitted())
                 <div class="px-4 py-3 text-sm font-medium bg-green-50 text-green-700 border border-green-200 rounded-md">
                     {{ session('status') }}
                 </div>
             @endif
 
-            <!-- Welcome -->
-            <div class="award-card p-6 sm:p-8">
+            @unless ($application->isSubmitted())
+                <!-- Welcome -->
+                <div class="award-card p-6 sm:p-8">
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                     <div>
                         <p class="award-kicker mb-2">Rotary CSR Awards 2026</p>
@@ -43,7 +44,6 @@
                     </span>
                 </div>
 
-                @unless ($application->isSubmitted())
                     @if ($deadline)
                         <div class="mt-5 rounded-md border px-4 py-3 text-sm {{ $deadlinePassed ? 'bg-red-50 text-red-700 border-red-200' : 'bg-[#17458F]/5 text-[#17458F] border-[#17458F]/20' }}">
                             @if ($deadlinePassed)
@@ -54,10 +54,10 @@
                             @endif
                         </div>
                     @endif
-                @endunless
-            </div>
+                </div>
+            @endunless
 
-            @if ($user->isBlacklisted())
+            @if ($user->isBlacklisted() && ! $application->isSubmitted())
                 <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
                     <span class="font-bold">Account blacklisted.</span>
                     You cannot edit this application or participate in future award cycles with this account.

@@ -58,15 +58,21 @@ class SupportingMediaFile implements ValidationRule
             return;
         }
 
-        if (in_array($mimeType, self::MIME_TYPES_BY_EXTENSION[$extension] ?? [], true)) {
+        if (! in_array($mimeType, self::MIME_TYPES_BY_EXTENSION[$extension] ?? [], true)
+            && ! ($mimeType === 'application/octet-stream' && $this->hasRecognizedVideoSignature($path, $extension))) {
+            $fail('The :attribute field must be a supported JPG, JPEG, PNG, WEBP, MP4, MOV, or WEBM file.');
+
             return;
         }
 
-        if ($mimeType === 'application/octet-stream' && $this->hasRecognizedVideoSignature($path, $extension)) {
-            return;
-        }
+        $isImage = str_starts_with($mimeType, 'image/');
+        $maximumBytes = $isImage ? 100 * 1024 : 2 * 1024 * 1024;
 
-        $fail('The :attribute field must be a supported JPG, JPEG, PNG, WEBP, MP4, MOV, or WEBM file.');
+        if ($value->getSize() > $maximumBytes) {
+            $fail($isImage
+                ? 'The :attribute field must not be greater than 100 KB.'
+                : 'The :attribute field must not be greater than 2 MB.');
+        }
     }
 
     private function hasRecognizedVideoSignature(string $path, string $extension): bool
