@@ -11,15 +11,15 @@ class ApplicationOptions
     public const COMPANY_SIZES = [
         'micro' => [
             'label' => 'Micro',
-            'help' => 'Up to 100 employees',
+            'help' => 'Turnover: FY 2025–2026 (in ₹ Crore) up to 100',
         ],
         'macro' => [
             'label' => 'Macro',
-            'help' => '101–499 employees',
+            'help' => 'Turnover: FY 2025–2026 (in ₹ Crore) 101–499',
         ],
         'mega' => [
             'label' => 'Mega',
-            'help' => '500 employees and above',
+            'help' => 'Turnover: FY 2025–2026 (in ₹ Crore) 500 and above',
         ],
     ];
 
