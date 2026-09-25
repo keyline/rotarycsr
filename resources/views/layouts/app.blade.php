@@ -28,7 +28,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="award-sky-panel min-h-[calc(100vh-10rem)] bg-fixed" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 {{ $slot }}
             </main>
         </div>

@@ -1,7 +1,7 @@
 @php
     $steps = \App\Services\ApplicationOptions::steps($application->applicant_type);
 @endphp
-<div class="flex items-center gap-2 mb-8">
+<div class="mb-8 flex items-center gap-2 rounded-2xl border border-white/40 bg-white/90 px-4 py-4 shadow-sm backdrop-blur sm:px-6">
     @foreach ($steps as $i => $key)
         @php $num = $i + 1; @endphp
         <div class="flex items-center gap-2 flex-1 last:flex-none">
