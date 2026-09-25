@@ -13,8 +13,8 @@
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
         <header class="absolute inset-x-0 top-0 z-20 w-full border-b border-white/30 bg-white/80 backdrop-blur-md">
-            <div class="mx-auto flex max-w-7xl items-center px-5 py-2.5 sm:px-8">
-                <x-site-logo class="h-10 w-auto sm:h-12" />
+            <div class="mx-auto flex max-w-7xl items-center justify-end px-5 py-2.5 sm:px-8">
+                <x-site-logo class="h-12 w-auto sm:h-14" />
             </div>
         </header>
 
