@@ -1,6 +1,8 @@
 @php
     $user = auth()->user();
     $isCorporate = $application->applicant_type === 'corporate';
+    $awardName = $isCorporate ? 'CSR Corporate Excellence Award' : 'Corporate CSR Leader Award';
+    $applicantLabel = $isCorporate ? 'Organization' : 'Individual';
 @endphp
 
 <x-app-layout>
@@ -11,7 +13,7 @@
     </x-slot>
 
     <div class="py-10 sm:py-14">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="mx-auto flex max-w-3xl flex-col gap-6 sm:px-6 lg:px-8">
 
             @if (session('status'))
                 <div class="px-4 py-3 text-sm font-medium bg-green-50 text-green-700 border border-green-200 rounded-md">
@@ -29,7 +31,7 @@
                         </h3>
                         <p class="mt-2 text-base leading-7 text-gray-600">
                             ROTARY INTERNATIONAL DISTRICT 3291 welcomes you to apply for the
-                            <span class="font-semibold text-gray-800">{{ $isCorporate ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}</span>
+                            <span class="font-semibold text-gray-800">{{ $awardName }}</span>
                             for your Company’s outstanding CSR Project.
                         </p>
                         <p class="mt-3 text-base leading-7 text-gray-600">
@@ -37,24 +39,23 @@
                         </p>
                     </div>
                     <span class="inline-block px-2.5 py-1 text-xs font-medium rounded-full {{ $isCorporate ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
-                        {{ $isCorporate ? 'Corporate' : 'Individual' }}
+                        {{ $applicantLabel }}
                     </span>
                 </div>
-            </div>
 
-            @unless ($application->isSubmitted())
-                <!-- Deadline -->
-                @if ($deadline)
-                    <div class="px-4 py-3 text-sm rounded-md border {{ $deadlinePassed ? 'bg-red-50 text-red-700 border-red-200' : 'bg-[#17458F]/5 text-[#17458F] border-[#17458F]/20' }}">
-                        @if ($deadlinePassed)
-                            The submission window closed on {{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}. No further edits or submissions are possible.
-                        @else
-                            Submissions close on <span class="font-semibold">{{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}</span>
-                            ({{ \Illuminate\Support\Carbon::parse($deadline)->diffForHumans() }}).
-                        @endif
-                    </div>
-                @endif
-            @endunless
+                @unless ($application->isSubmitted())
+                    @if ($deadline)
+                        <div class="mt-5 rounded-md border px-4 py-3 text-sm {{ $deadlinePassed ? 'bg-red-50 text-red-700 border-red-200' : 'bg-[#17458F]/5 text-[#17458F] border-[#17458F]/20' }}">
+                            @if ($deadlinePassed)
+                                The submission window closed on {{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}. No further edits or submissions are possible.
+                            @else
+                                Submissions close on <span class="font-semibold">{{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}</span>
+                                ({{ \Illuminate\Support\Carbon::parse($deadline)->diffForHumans() }}).
+                            @endif
+                        </div>
+                    @endif
+                @endunless
+            </div>
 
             @if ($user->isBlacklisted())
                 <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -87,7 +88,7 @@
                             <h3 class="mt-1 font-display text-2xl font-bold text-rotary-navy">Thank you for your submission, {{ $user->name }}.</h3>
                             <p class="mt-2 text-sm leading-6 text-gray-600">
                                 We have successfully received your application for the
-                                <span class="font-semibold text-gray-800">{{ $isCorporate ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}</span>.
+                                <span class="font-semibold text-gray-800">{{ $awardName }}</span>.
                                 The Rotary District 3291 CSR Awards team will review your submission and share any updates with you by email.
                             </p>
                             <div class="mt-4 inline-flex rounded-lg border border-[#17458F]/20 bg-[#17458F]/5 px-4 py-3">

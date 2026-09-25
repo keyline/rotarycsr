@@ -7,6 +7,7 @@ use App\Models\ApplicationSupportingDocument;
 use App\Rules\SupportingMediaFile;
 use App\Services\ActivityLogger;
 use App\Services\ApplicationOptions;
+use App\Services\ApplicationSubmissionMailer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -160,7 +161,7 @@ class ApplicationWizardController extends Controller
         ]);
     }
 
-    public function submit(Request $request): RedirectResponse
+    public function submit(Request $request, ApplicationSubmissionMailer $submissionMailer): RedirectResponse
     {
         $application = $this->applicationFor($request->user());
 
@@ -225,10 +226,13 @@ class ApplicationWizardController extends Controller
             return redirect()->route('dashboard')->with('status', 'This application is already locked.');
         }
 
+        $emailDelivery = $submissionMailer->send($application);
+
         ActivityLogger::log(
             'application.submitted',
             "{$request->user()->email} submitted their {$type} application.",
             $application,
+            $emailDelivery,
         );
 
         return redirect()->route('dashboard')->with(
