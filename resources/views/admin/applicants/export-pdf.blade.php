@@ -26,9 +26,11 @@
         td:first-child { background: #f3f4f6; color: #374151; font-weight: bold; width: 29%; }
         .empty { color: #9ca3af; }
         .media-section { border-top: 2px solid #d49b2a; margin-top: 14px; padding-top: 8px; }
-        .media-title { color: #0b3763; font-size: 13px; font-weight: bold; margin: 0 0 8px; }
-        .media-item { margin-bottom: 12px; page-break-inside: avoid; }
-        .media-name { color: #374151; font-weight: bold; margin-bottom: 5px; }
+        .media-title { color: #0b3763; font-size: 13px; font-weight: bold; margin: 0 0 8px; page-break-after: avoid; }
+        .media-item { margin: 0 0 12px; page-break-inside: avoid; }
+        .media-item td, .media-item td:first-child { background: transparent; border: 0; padding: 0; width: auto; }
+        .media-item .media-name { color: #374151; font-weight: bold; padding-bottom: 8px; }
+        .media-preview-link { display: block; }
         .media-image { border: 1px solid #d1d5db; display: block; max-height: 200px; max-width: 200px; object-fit: contain; }
         .media-link { color: #17458f; word-break: break-all; }
     </style>
@@ -68,16 +70,20 @@
                 <div class="media-section">
                     <div class="media-title">Supporting Documents / Proof</div>
                     @foreach ($record['media'] as $media)
-                        <div class="media-item">
-                            <div class="media-name">{{ $media['name'] }} ({{ strtoupper($media['type']) }})</div>
-                            @if ($media['type'] === 'image' && $media['data_uri'] !== '')
-                                <a href="{{ $media['url'] }}" target="_blank">
-                                    <img src="{{ $media['data_uri'] }}" alt="{{ $media['name'] }}" class="media-image">
-                                </a>
-                            @else
-                                <a href="{{ $media['url'] }}" target="_blank" class="media-link">{{ $media['url'] }}</a>
-                            @endif
-                        </div>
+                        <table class="media-item">
+                            <tr><td class="media-name">{{ $media['name'] }} ({{ strtoupper($media['type']) }})</td></tr>
+                            <tr>
+                                <td>
+                                    @if ($media['type'] === 'image' && $media['data_uri'] !== '')
+                                        <a href="{{ $media['url'] }}" target="_blank" class="media-preview-link">
+                                            <img src="{{ $media['data_uri'] }}" alt="{{ $media['name'] }}" class="media-image">
+                                        </a>
+                                    @else
+                                        <a href="{{ $media['url'] }}" target="_blank" class="media-link">{{ $media['url'] }}</a>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
                     @endforeach
                 </div>
             @endif
