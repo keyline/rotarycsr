@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Services\ApplicationOptions;
+use App\Services\DashboardContent;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -22,6 +23,7 @@ class DashboardController extends Controller
             'application' => $application,
             'deadline' => ApplicationOptions::deadline(),
             'deadlinePassed' => ApplicationOptions::deadlineHasPassed(),
+            'howItWorksSteps' => DashboardContent::howItWorksSteps(),
         ]);
     }
 }

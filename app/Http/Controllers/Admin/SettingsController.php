@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\ActivityLogger;
 use App\Services\ApplicationDecisionMailer;
+use App\Services\DashboardContent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -16,6 +17,7 @@ class SettingsController extends Controller
     {
         return view('admin.settings.index', [
             'deadline' => Setting::get('submission_deadline'),
+            'howItWorks' => DashboardContent::howItWorks(),
             'decisionMailTemplates' => collect(ApplicationDecisionMailer::DEFAULT_TEMPLATES)
                 ->map(fn (array $template, string $decision): array => [
                     'subject' => Setting::get("decision_mail_{$decision}_subject", $template['subject']),
@@ -63,5 +65,21 @@ class SettingsController extends Controller
         ActivityLogger::log('admin.decision_emails_updated', 'Application decision email templates were updated.');
 
         return back()->with('status', 'Decision email templates updated.');
+    }
+
+    public function updateDashboardContent(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'how_it_works' => ['required', 'string', 'max:10000'],
+        ]);
+
+        Setting::set(DashboardContent::SETTING_KEY, trim($validated['how_it_works']));
+
+        ActivityLogger::log(
+            'admin.dashboard_content_updated',
+            'Applicant dashboard How It Works content was updated.',
+        );
+
+        return back()->with('status', 'Dashboard How It Works content updated.');
     }
 }

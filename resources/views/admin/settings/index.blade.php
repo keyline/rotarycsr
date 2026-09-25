@@ -31,6 +31,29 @@
     </div>
 
     <div class="mt-6 max-w-4xl rounded-lg border border-gray-200 bg-white p-5">
+        <h2 class="text-sm font-semibold text-gray-800">Applicant Dashboard - How It Works</h2>
+        <p class="mt-1 text-xs leading-5 text-gray-500">
+            Enter one instruction per line. These numbered steps appear on the applicant dashboard before the application section.
+        </p>
+
+        <form method="POST" action="{{ route('admin.settings.dashboard-content') }}" class="mt-4 space-y-3">
+            @csrf
+            @method('PUT')
+            <div>
+                <label for="how_it_works" class="mb-1 block text-xs font-medium text-gray-600">How It Works steps</label>
+                <textarea id="how_it_works" name="how_it_works" rows="8" required
+                          class="w-full rounded-md border-gray-300 text-sm leading-6 focus:border-[#17458F] focus:ring-[#17458F]">{{ old('how_it_works', $howItWorks) }}</textarea>
+                @error('how_it_works')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+            <button type="submit" class="rounded-md bg-[#17458F] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#123669]">
+                Save How It Works
+            </button>
+        </form>
+    </div>
+
+    <div class="mt-6 max-w-4xl rounded-lg border border-gray-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-gray-800">Application Decision Emails</h2>
         <p class="mt-1 text-xs leading-5 text-gray-500">
             These emails are sent when an application is approved, rejected, or blacklisted.

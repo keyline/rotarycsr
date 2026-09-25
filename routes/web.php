@@ -62,6 +62,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings/deadline', [SettingsController::class, 'updateDeadline'])->name('settings.deadline');
+    Route::put('/settings/dashboard-content', [SettingsController::class, 'updateDashboardContent'])->name('settings.dashboard-content');
     Route::put('/settings/decision-emails', [SettingsController::class, 'updateDecisionEmails'])->name('settings.decision-emails');
 });
 
