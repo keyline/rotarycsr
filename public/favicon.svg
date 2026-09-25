@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+    <title id="title">Rotary CSR Awards</title>
+    <rect width="64" height="64" rx="14" fill="#12325E"/>
+    <g transform="translate(32 32)">
+        <defs>
+            <rect id="gear-tooth" x="-3" y="-29" width="6" height="10" rx="1"/>
+        </defs>
+        <g fill="#F7A81B">
+            <use href="#gear-tooth" transform="rotate(0)"/>
+            <use href="#gear-tooth" transform="rotate(30)"/>
+            <use href="#gear-tooth" transform="rotate(60)"/>
+            <use href="#gear-tooth" transform="rotate(90)"/>
+            <use href="#gear-tooth" transform="rotate(120)"/>
+            <use href="#gear-tooth" transform="rotate(150)"/>
+            <use href="#gear-tooth" transform="rotate(180)"/>
+            <use href="#gear-tooth" transform="rotate(210)"/>
+            <use href="#gear-tooth" transform="rotate(240)"/>
+            <use href="#gear-tooth" transform="rotate(270)"/>
+            <use href="#gear-tooth" transform="rotate(300)"/>
+            <use href="#gear-tooth" transform="rotate(330)"/>
+        </g>
+        <circle r="22" fill="#F7A81B"/>
+        <circle r="16" fill="#12325E"/>
+        <g stroke="#F7A81B" stroke-width="3" stroke-linecap="round">
+            <path d="M0-15V-6M0 6V15M-15 0H-6M6 0H15"/>
+            <path d="M-10.6-10.6-4.2-4.2M4.2 4.2 10.6 10.6M10.6-10.6 4.2-4.2M-4.2 4.2-10.6 10.6"/>
+        </g>
+        <circle r="6" fill="#F7A81B"/>
+        <circle r="2.5" fill="#12325E"/>
+    </g>
+</svg>
