@@ -27,9 +27,13 @@
                         <h3 class="font-display text-3xl font-bold text-rotary-navy">
                             Welcome, {{ $user->name }}
                         </h3>
-                        <p class="text-sm text-gray-500 mt-1">
-                            {{ $application->isSubmitted() ? 'You applied' : "You're applying" }} for the <span class="font-semibold text-gray-700">{{ $isCorporate ? 'Corporate Excellence Award' : 'CSR Leader of the Year' }}</span> category
-                            of the Rotary District 3291 CSR Awards.
+                        <p class="mt-2 text-base leading-7 text-gray-600">
+                            ROTARY INTERNATIONAL DISTRICT 3291 welcomes you to apply for the
+                            <span class="font-semibold text-gray-800">{{ $isCorporate ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}</span>
+                            for your Company’s outstanding CSR Project.
+                        </p>
+                        <p class="mt-3 text-base leading-7 text-gray-600">
+                            The event will be held in November 2026 in Kolkata to recognize distinguished Corporates and eminent CSR Leaders.
                         </p>
                     </div>
                     <span class="inline-block px-2.5 py-1 text-xs font-medium rounded-full {{ $isCorporate ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
