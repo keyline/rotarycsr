@@ -14,12 +14,7 @@
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
         <header class="absolute inset-x-0 top-0 z-20 w-full">
-            <div class="flex w-full items-center justify-between gap-4 px-5 pt-5 sm:gap-8 sm:px-8 lg:pt-20">
-                <div class="min-w-0 flex-1 xl:pl-[calc((100vw-80rem)/2)]">
-                    <p class="award-kicker max-w-3xl text-sm leading-snug tracking-[0.14em] sm:text-xl lg:text-2xl">
-                        Rotary International District 3291 presents
-                    </p>
-                </div>
+            <div class="flex w-full items-center justify-end px-5 pt-5 sm:px-8 lg:pt-20">
                 <x-site-logo class="h-auto w-40 shrink-0 sm:w-72 lg:w-96" />
             </div>
         </header>
@@ -29,6 +24,9 @@
                 <div class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
                     <div class="max-w-xl">
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
+                        <p class="mb-2 pl-2 text-[9px] font-bold uppercase leading-snug tracking-[0.12em] text-rotary-gold sm:text-[11px]">
+                            Rotary International District 3291 presents
+                        </p>
                         <img src="{{ asset('images/rotary-csr-awards-2026-tight.png') }}"
                              alt="Rotary CSR Awards 2026"
                              class="-mt-5 h-auto w-full max-w-[340px] sm:max-w-[370px]"
