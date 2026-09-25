@@ -188,16 +188,6 @@
                                 </td>
                                 <td class="px-3 py-2 text-right align-middle">
                                     <div class="flex flex-wrap items-center justify-end gap-1">
-                                        @if ($isAwardWinner)
-                                            <span class="inline-flex rounded-full bg-[#d49b2a]/15 px-2.5 py-1 text-xs font-semibold text-[#8a5d08]">
-                                                Award Winner
-                                            </span>
-                                        @endif
-                                        @if ($awardEmailSent)
-                                            <span class="inline-flex rounded-full bg-green-600 px-2.5 py-1 text-xs font-semibold text-white">
-                                                Award Email Sent
-                                            </span>
-                                        @endif
                                         <button type="button"
                                                 @click="
                                                     open = true; loading = true; content = '';

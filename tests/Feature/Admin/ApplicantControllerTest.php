@@ -25,7 +25,7 @@ class ApplicantControllerTest extends TestCase
         $response->assertSee('rel="noopener noreferrer"', false);
     }
 
-    public function test_completed_award_email_highlights_the_row_and_shows_status_badges(): void
+    public function test_completed_award_email_highlights_the_row_without_status_badges(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
@@ -49,8 +49,8 @@ class ApplicantControllerTest extends TestCase
         $response->assertSee('data-applicant-row="'.$applicant->id.'"', false);
         $response->assertSee('data-award-complete="true"', false);
         $response->assertSee('bg-green-50 hover:bg-green-100', false);
-        $response->assertSee('Award Winner');
-        $response->assertSee('Award Email Sent');
+        $response->assertDontSeeText('Award Winner');
+        $response->assertDontSeeText('Award Email Sent');
     }
 
     public function test_award_actions_are_hidden_from_the_applicants_list(): void
