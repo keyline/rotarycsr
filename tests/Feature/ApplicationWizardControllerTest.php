@@ -16,7 +16,7 @@ class ApplicationWizardControllerTest extends TestCase
     use LazilyRefreshDatabase;
 
     #[DataProvider('companySizes')]
-    public function test_each_supported_company_size_is_saved_with_turnover(string $companySize): void
+    public function test_each_supported_company_size_is_saved(string $companySize): void
     {
         $applicant = User::factory()->create([
             'role' => 'applicant',
@@ -31,14 +31,12 @@ class ApplicationWizardControllerTest extends TestCase
 
         $response = $this->actingAs($applicant)->post(route('application.step', 1), [
             'company_size' => $companySize,
-            'company_turnover' => '1250.75',
         ]);
 
         $response->assertRedirect(route('application.step', 2));
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'company_size' => $companySize,
-            'company_turnover' => '1250.75',
             'current_step' => 2,
         ]);
         $this->assertDatabaseHas('activity_logs', [
@@ -77,12 +75,10 @@ class ApplicationWizardControllerTest extends TestCase
         $response->assertRedirect(route('application.step', 1));
         $response->assertSessionHasErrors([
             'company_size' => 'The company size field is required.',
-            'company_turnover' => 'The company turnover field is required.',
         ]);
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'company_size' => null,
-            'company_turnover' => null,
             'current_step' => 1,
         ]);
         $this->assertDatabaseMissing('activity_logs', [
@@ -91,13 +87,8 @@ class ApplicationWizardControllerTest extends TestCase
         ]);
     }
 
-    #[DataProvider('invalidCompanyInformation')]
-    public function test_invalid_company_information_is_rejected(
-        string $companySize,
-        string $companyTurnover,
-        string $invalidField,
-        string $message,
-    ): void {
+    public function test_unsupported_company_size_is_rejected(): void
+    {
         $applicant = User::factory()->create([
             'role' => 'applicant',
             'applicant_type' => 'corporate',
@@ -112,16 +103,16 @@ class ApplicationWizardControllerTest extends TestCase
         $response = $this->actingAs($applicant)
             ->from(route('application.step', 1))
             ->post(route('application.step', 1), [
-                'company_size' => $companySize,
-                'company_turnover' => $companyTurnover,
+                'company_size' => 'enterprise',
             ]);
 
         $response->assertRedirect(route('application.step', 1));
-        $response->assertSessionHasErrors([$invalidField => $message]);
+        $response->assertSessionHasErrors([
+            'company_size' => 'The selected company size is invalid.',
+        ]);
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'company_size' => null,
-            'company_turnover' => null,
             'current_step' => 1,
         ]);
         $this->assertDatabaseMissing('activity_logs', [
@@ -130,37 +121,7 @@ class ApplicationWizardControllerTest extends TestCase
         ]);
     }
 
-    public static function invalidCompanyInformation(): array
-    {
-        return [
-            'unsupported company size' => [
-                'enterprise',
-                '1250.75',
-                'company_size',
-                'The selected company size is invalid.',
-            ],
-            'non-numeric turnover' => [
-                'micro',
-                'not-a-number',
-                'company_turnover',
-                'The company turnover field must be a number.',
-            ],
-            'negative turnover' => [
-                'macro',
-                '-0.01',
-                'company_turnover',
-                'The company turnover field must be at least 0.',
-            ],
-            'turnover exceeds storage limit' => [
-                'mega',
-                '10000000000000',
-                'company_turnover',
-                'The company turnover field must not be greater than 9999999999999.99.',
-            ],
-        ];
-    }
-
-    public function test_company_information_is_available_to_autosave(): void
+    public function test_autosave_saves_company_size_and_ignores_removed_fields(): void
     {
         $applicant = User::factory()->create([
             'role' => 'applicant',
@@ -187,7 +148,7 @@ class ApplicationWizardControllerTest extends TestCase
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'company_size' => 'mega',
-            'company_turnover' => '9876.50',
+            'company_turnover' => null,
             'corporate_category' => null,
         ]);
     }
@@ -212,8 +173,8 @@ class ApplicationWizardControllerTest extends TestCase
         $response->assertSeeText('Company Information');
         $response->assertSeeText('Company Size');
         $response->assertSeeText('Macro');
-        $response->assertSeeText('Turnover — FY 2025–2026');
-        $response->assertSeeText('₹1,234.50 Crore');
+        $response->assertDontSeeText('Turnover — FY 2025–2026');
+        $response->assertDontSeeText('₹1,234.50 Crore');
     }
 
     public function test_area_of_focus_page_uses_the_new_environment_option(): void
@@ -458,7 +419,6 @@ class ApplicationWizardControllerTest extends TestCase
         $application = Application::whereBelongsTo($applicant)->firstOrFail();
         $application->fill(array_merge([
             'company_size' => 'macro',
-            'company_turnover' => '1250.00',
             'focus_area' => 'environment',
             'corporate_foundation_name' => 'Example Foundation',
             'csr_registration_number' => 'CSR00001234',

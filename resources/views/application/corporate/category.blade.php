@@ -1,5 +1,5 @@
 <x-application-step :application="$application" :step="$step" :total-steps="$totalSteps" :step-key="$stepKey" :locked="$locked">
-    <p class="mb-1 text-sm text-gray-500">Provide your company size and turnover for FY 2025–2026.</p>
+    <p class="mb-1 text-sm text-gray-500">Select your company size based on turnover for FY 2025–2026.</p>
 
     <div class="space-y-3">
         <x-input-label value="Company Size" />
@@ -17,11 +17,4 @@
     </div>
 
     <x-input-error :messages="$errors->get('company_size')" class="mt-2" />
-
-    <div>
-        <x-input-label for="company_turnover" value="Turnover — FY 2025–2026 (₹ Crore)" />
-        <x-text-input id="company_turnover" name="company_turnover" type="number" step="0.01" min="0" max="9999999999999.99"
-                      class="mt-1 block w-full" :value="$application->company_turnover" required />
-        <x-input-error :messages="$errors->get('company_turnover')" class="mt-1" />
-    </div>
 </x-application-step>

@@ -56,7 +56,7 @@ class SelectedApplicantExportControllerTest extends TestCase
 
         $this->assertSame('Selected Applicant', $record['Name']);
         $this->assertSame('Mega', $record['Company Size']);
-        $this->assertSame(5000.25, $record['Turnover FY 2025–2026 (₹ Crore)']);
+        $this->assertArrayNotHasKey('Turnover FY 2025–2026 (₹ Crore)', $record);
         $this->assertSame('RICSR/CP/0001', $record['Application ID']);
         $this->assertSame('Clean Water Programme', $record['Project Title']);
         $this->assertSame('Safe water access', $record['Brief Project Concept / Design']);

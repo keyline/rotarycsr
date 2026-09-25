@@ -75,14 +75,10 @@
     <div class="space-y-4">
         <div>
             <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Company Information</h4>
-            <dl class="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+            <dl class="text-sm">
                 <div>
                     <dt class="text-xs text-gray-400">Company Size</dt>
                     <dd class="text-gray-700">{{ \App\Services\ApplicationOptions::COMPANY_SIZES[$application->company_size]['label'] ?? '—' }}</dd>
-                </div>
-                <div>
-                    <dt class="text-xs text-gray-400">Turnover — FY 2025–2026</dt>
-                    <dd class="text-gray-700">{{ $application->company_turnover !== null ? '₹'.number_format((float) $application->company_turnover, 2).' Crore' : '—' }}</dd>
                 </div>
             </dl>
         </div>

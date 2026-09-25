@@ -43,7 +43,6 @@ class ApplicantExportData
     {
         return [
             'Company Size' => ucfirst($this->text($application->company_size)),
-            'Turnover FY 2025–2026 (₹ Crore)' => $this->text($application->company_turnover),
             'Focus Area' => ApplicationOptions::FOCUS_AREAS[$application->focus_area] ?? '',
             'Corporate / Foundation Name' => $this->text($application->corporate_foundation_name),
             'CSR Registration Number' => $this->text($application->csr_registration_number),

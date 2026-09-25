@@ -82,7 +82,6 @@ class ApplicationOptions
         return match ($stepKey) {
             'category' => [
                 'company_size' => ['required', 'in:'.implode(',', array_keys(self::COMPANY_SIZES))],
-                'company_turnover' => ['required', 'numeric', 'min:0', 'max:9999999999999.99'],
             ],
             'focus' => [
                 'focus_area' => ['required', 'in:'.implode(',', array_keys(self::FOCUS_AREAS))],
