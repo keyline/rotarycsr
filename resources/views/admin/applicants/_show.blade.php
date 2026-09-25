@@ -150,7 +150,9 @@
                 @else
                     <div class="mt-3 grid gap-4 sm:grid-cols-2">
                         @foreach ($application->supportingDocuments as $document)
-                            @php($previewUrl = route('application.supporting-documents.preview', $document))
+                            @php
+                                $previewUrl = route('application.supporting-documents.preview', $document);
+                            @endphp
                             <article class="min-w-0 rounded-lg border border-gray-200 bg-gray-50 p-3">
                                 @if ($document->media_type === 'image')
                                     <a href="{{ $previewUrl }}" target="_blank" rel="noopener noreferrer" class="block">

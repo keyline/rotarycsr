@@ -5,7 +5,6 @@ namespace Tests\Feature\Admin;
 use App\Models\ApplicantEmailLog;
 use App\Models\Application;
 use App\Models\User;
-use App\Services\ApplicantMessageMailer;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -54,12 +53,20 @@ class ApplicantControllerTest extends TestCase
         $response->assertSee('Award Email Sent');
     }
 
-    public function test_marked_winner_sees_manual_award_email_action_with_requested_defaults(): void
+    public function test_award_actions_are_hidden_from_the_applicants_list(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'individual']);
+        $approvedApplicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
         Application::create([
-            'user_id' => $applicant->id,
+            'user_id' => $approvedApplicant->id,
+            'applicant_type' => 'corporate',
+            'status' => 'submitted',
+            'submitted_at' => now(),
+            'review_status' => 'approved',
+        ]);
+        $awardWinner = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'individual']);
+        Application::create([
+            'user_id' => $awardWinner->id,
             'applicant_type' => 'individual',
             'status' => 'submitted',
             'submitted_at' => now(),
@@ -70,11 +77,28 @@ class ApplicantControllerTest extends TestCase
 
         $response = $this->actingAs($admin)->get(route('admin.applicants.index'));
 
-        $response->assertSee('Award Email');
-        $response->assertSee(route('admin.applicants.email', $applicant), false);
-        $response->assertSee(ApplicantMessageMailer::AWARD_SUBJECT);
-        $response->assertSee('We are pleased to inform you that you have been selected for an award.');
-        $response->assertSee('No email will be sent automatically.');
+        $response->assertDontSee('title="Mark '.$approvedApplicant->name.' as an award winner"', false);
+        $response->assertDontSee('title="Send award email to '.$awardWinner->name.'"', false);
+        $response->assertDontSee(route('admin.applications.award-winner', $approvedApplicant->application), false);
+    }
+
+    public function test_applicants_table_displays_the_generated_application_number(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
+        Application::create([
+            'user_id' => $applicant->id,
+            'applicant_type' => 'corporate',
+            'status' => 'submitted',
+            'submitted_at' => now(),
+            'reference_number' => 'RICSR/CP/0042',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.applicants.index'));
+
+        $response->assertSee('<table', false);
+        $response->assertSeeText('Application Number');
+        $response->assertSeeText('RICSR/CP/0042');
     }
 
     public function test_application_popup_previews_images_and_videos_without_a_blacklist_action(): void
