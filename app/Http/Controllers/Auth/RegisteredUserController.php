@@ -76,7 +76,11 @@ class RegisteredUserController extends Controller
             $user = User::create($attributes);
         }
 
-        $debugOtp = $otpService->issue($user);
+        if (! $otpService->issue($user)) {
+            return redirect()->route('register', ['type' => $applicantType])
+                ->withErrors(['email' => 'We could not send a verification code. Please try again.'])
+                ->withInput();
+        }
 
         ActivityLogger::log(
             'auth.register.otp_sent',
@@ -88,7 +92,6 @@ class RegisteredUserController extends Controller
 
         session(['pending_registration_user_id' => $user->id]);
 
-        return redirect()->route('verification.otp')
-            ->with('debug_otp', $debugOtp);
+        return redirect()->route('verification.otp');
     }
 }

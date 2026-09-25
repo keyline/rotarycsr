@@ -15,9 +15,10 @@ class OtpService
 
     /**
      * Generate a fresh OTP for the user, store its hash, and email it.
-     * Returns the plain OTP in debug mode or when email delivery fails.
+     *
+     * Return whether the email was sent.
      */
-    public function issue(User $user): ?string
+    public function issue(User $user): bool
     {
         $otp = (string) random_int(100000, 999999);
 
@@ -26,14 +27,12 @@ class OtpService
             'otp_expires_at' => now()->addMinutes(self::TTL_MINUTES),
         ])->save();
 
-        $sent = $this->mailer->send(
+        return $this->mailer->send(
             $user->email,
             $user->name,
             'Your Rotary CSR Awards verification code',
             $this->emailBody($user->name, $otp)
         );
-
-        return (config('app.debug') || ! $sent) ? $otp : null;
     }
 
     public function verify(User $user, string $otp): bool

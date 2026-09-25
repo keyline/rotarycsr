@@ -26,7 +26,6 @@ class OtpVerificationController extends Controller
 
         return view('auth.verify-otp', [
             'email' => $user->email,
-            'debugOtp' => session('debug_otp'),
         ]);
     }
 
@@ -73,7 +72,10 @@ class OtpVerificationController extends Controller
             return redirect()->route('apply');
         }
 
-        $debugOtp = $otpService->issue($user);
+        if (! $otpService->issue($user)) {
+            return redirect()->route('verification.otp')
+                ->with('error', 'We could not send a new verification code. Please try again.');
+        }
 
         ActivityLogger::log(
             'auth.register.otp_resent',
@@ -83,7 +85,6 @@ class OtpVerificationController extends Controller
         );
 
         return redirect()->route('verification.otp')
-            ->with('debug_otp', $debugOtp)
             ->with('status', 'A new verification code has been sent to your email.');
     }
 

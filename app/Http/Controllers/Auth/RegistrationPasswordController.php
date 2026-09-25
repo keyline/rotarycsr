@@ -42,7 +42,6 @@ class RegistrationPasswordController extends Controller
         ])->save();
 
         $request->session()->forget('pending_registration_user_id');
-        $request->session()->forget('debug_otp');
 
         ActivityLogger::log(
             'auth.register.completed',
