@@ -50,4 +50,18 @@ class SupportingMediaFileTest extends TestCase
             'The :attribute field must be a supported JPG, JPEG, PNG, WEBP, MP4, MOV, or WEBM file.',
         ], $messages);
     }
+
+    public function test_unreadable_upload_fails_validation_without_throwing_an_exception(): void
+    {
+        $messages = [];
+        $file = new UploadedFile('', 'video.mp4', 'video/mp4', UPLOAD_ERR_INI_SIZE, true);
+
+        (new SupportingMediaFile)->validate('document', $file, function (string $message) use (&$messages): void {
+            $messages[] = $message;
+        });
+
+        $this->assertSame([
+            'The :attribute failed to upload. Please try again.',
+        ], $messages);
+    }
 }

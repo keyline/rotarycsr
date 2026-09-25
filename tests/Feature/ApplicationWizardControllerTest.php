@@ -460,6 +460,30 @@ class ApplicationWizardControllerTest extends TestCase
             ->assertSeeText('The supporting documents.0 field must not be greater than 5000 kilobytes.');
     }
 
+    public function test_failed_supporting_file_upload_returns_validation_error(): void
+    {
+        Storage::fake('local');
+        [$applicant, $application] = $this->corporateApplicationAtStep(4);
+        $failedUpload = new UploadedFile('', 'project.mp4', 'video/mp4', UPLOAD_ERR_INI_SIZE, true);
+
+        $response = $this->actingAs($applicant)
+            ->from(route('application.step', 4))
+            ->post(route('application.step', 4), array_merge($this->validProjectDetails(), [
+                'supporting_documents' => [$failedUpload],
+            ]));
+
+        $response->assertRedirect(route('application.step', 4));
+        $response->assertSessionHasErrors([
+            'supporting_documents.0' => 'The supporting documents.0 failed to upload.',
+        ]);
+        $this->assertDatabaseMissing('application_supporting_documents', ['application_id' => $application->id]);
+        $this->assertDatabaseHas('applications', [
+            'id' => $application->id,
+            'current_step' => 4,
+            'project_name' => null,
+        ]);
+    }
+
     public function test_supporting_media_download_is_limited_to_the_owner_and_admin(): void
     {
         Storage::fake('local');

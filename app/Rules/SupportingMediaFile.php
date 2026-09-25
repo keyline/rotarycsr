@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Translation\PotentiallyTranslatedString;
+use Symfony\Component\Mime\Exception\InvalidArgumentException as MimeInvalidArgumentException;
 
 class SupportingMediaFile implements ValidationRule
 {
@@ -28,31 +29,48 @@ class SupportingMediaFile implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! $value instanceof UploadedFile) {
+            $fail('The :attribute field must be a supported JPG, JPEG, PNG, WEBP, MP4, MOV, or WEBM file.');
+
+            return;
+        }
+
+        if (! $value->isValid()) {
+            $fail('The :attribute failed to upload. Please try again.');
+
+            return;
+        }
+
+        $path = $value->getRealPath();
+
+        if ($path === false || ! is_readable($path)) {
+            $fail('The :attribute failed to upload. Please try again.');
+
             return;
         }
 
         $extension = strtolower($value->getClientOriginalExtension());
-        $mimeType = strtolower($value->getMimeType() ?: 'application/octet-stream');
+
+        try {
+            $mimeType = strtolower($value->getMimeType() ?: 'application/octet-stream');
+        } catch (MimeInvalidArgumentException) {
+            $fail('The :attribute failed to upload. Please try again.');
+
+            return;
+        }
 
         if (in_array($mimeType, self::MIME_TYPES_BY_EXTENSION[$extension] ?? [], true)) {
             return;
         }
 
-        if ($mimeType === 'application/octet-stream' && $this->hasRecognizedVideoSignature($value, $extension)) {
+        if ($mimeType === 'application/octet-stream' && $this->hasRecognizedVideoSignature($path, $extension)) {
             return;
         }
 
         $fail('The :attribute field must be a supported JPG, JPEG, PNG, WEBP, MP4, MOV, or WEBM file.');
     }
 
-    private function hasRecognizedVideoSignature(UploadedFile $file, string $extension): bool
+    private function hasRecognizedVideoSignature(string $path, string $extension): bool
     {
-        $path = $file->getRealPath();
-
-        if ($path === false) {
-            return false;
-        }
-
         $handle = fopen($path, 'rb');
 
         if ($handle === false) {

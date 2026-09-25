@@ -64,6 +64,7 @@ class ApplicationWizardController extends Controller
             $remainingDocumentSlots = max(0, 10 - $application->supportingDocuments()->count());
             $rules['supporting_documents'] = ['nullable', 'array', 'max:'.$remainingDocumentSlots];
             $rules['supporting_documents.*'] = [
+                'bail',
                 File::types([])
                     ->extensions(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm'])
                     ->max('5mb'),
