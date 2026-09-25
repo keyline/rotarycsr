@@ -10,13 +10,50 @@
     <link href="https://fonts.bunny.net/css?family=cormorant-garamond:500,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .home-mobile-header { min-height: 92px; }
+        .home-header-logo-mobile { width: min(225px, calc(100vw - 100px)); height: auto; }
+        .home-header-logo-desktop { width: 256px; height: auto; }
+        .home-hero {
+            min-height: calc(100svh - 92px);
+            background-image: linear-gradient(90deg, rgba(255, 250, 240, .7), rgba(255, 250, 240, .05) 85%), var(--award-background-image);
+            background-position: 65% center;
+            background-size: cover;
+        }
+        .home-hero-inner { padding-bottom: 3rem; }
+        .home-hero-kicker { max-width: 100%; font-size: 12px; letter-spacing: .02em; }
+        .home-award-logo { display: block; width: min(205px, 100%); height: auto; }
+        .home-hero-title { font-size: 2rem; line-height: 1.05; }
+        .home-hero-description, .home-hero-actions { max-width: 330px; }
+        .home-hero .award-button-gold { background-image: linear-gradient(90deg, #d29c37, #e7b84f 55%, #c8942f); }
+        @media (min-width: 640px) {
+            .home-hero {
+                min-height: 680px;
+                align-items: center;
+                padding-top: 10rem;
+                background-image: linear-gradient(90deg, rgba(255, 250, 240, .97) 0%, rgba(255, 250, 240, .84) 35%, rgba(255, 250, 240, .08) 68%), var(--award-background-image);
+                background-position: center;
+            }
+            .home-hero-inner { padding-bottom: 2.5rem; }
+            .home-hero-kicker { max-width: none; letter-spacing: .12em; }
+            .home-award-logo { width: 310px; }
+            .home-hero-title { font-size: 2.25rem; line-height: 1.25; }
+            .home-hero-description { max-width: 36rem; }
+            .home-hero-actions { max-width: none; }
+            .home-hero .award-button-gold { background-image: none; }
+        }
+        @media (min-width: 1024px) {
+            .home-hero { min-height: 665px; align-items: flex-start; padding-top: 0; }
+            .home-hero-inner { max-width: 1080px; padding-top: 2rem; }
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
         <header x-data="{ open: false }" class="relative z-20 w-full bg-white sm:absolute sm:inset-x-0 sm:top-0 sm:bg-transparent">
-            <div class="flex min-h-[92px] items-center justify-between gap-3 px-5 py-2 sm:hidden">
+            <div class="home-mobile-header flex min-h-[92px] items-center justify-between gap-3 px-5 py-2 sm:hidden">
                 <a href="{{ url('/') }}" class="flex min-w-0 flex-col items-start" aria-label="Rotary District 3291 home">
-                    <x-site-logo class="block h-auto w-[225px] max-w-full" />
+                    <x-site-logo class="home-header-logo-mobile block h-auto w-[225px] max-w-full" />
                     <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </a>
                 <button type="button" @click="open = ! open" :aria-expanded="open.toString()" aria-controls="home-mobile-menu" aria-label="Toggle navigation" class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-rotary-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-rotary-gold">
@@ -37,7 +74,7 @@
             </nav>
             <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
                 <div class="flex flex-col items-start">
-                    <x-site-logo class="h-auto w-60 shrink-0 lg:w-64" />
+                    <x-site-logo class="home-header-logo-desktop h-auto w-60 shrink-0 lg:w-64" />
                     <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </div>
             </div>
@@ -45,22 +82,22 @@
 
         <main class="flex-1">
             <section class="award-hero home-hero relative flex min-h-[calc(100svh-92px)] items-start sm:min-h-[680px] sm:items-center sm:pt-40 lg:min-h-[665px] lg:items-start lg:pt-0" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
-                <div class="relative z-10 mx-auto w-full max-w-7xl px-5 pb-12 pt-7 sm:px-8 sm:py-10 lg:max-w-[1080px] lg:pt-8">
+                <div class="home-hero-inner relative z-10 mx-auto w-full max-w-7xl px-5 pb-12 pt-7 sm:px-8 sm:py-10 lg:max-w-[1080px] lg:pt-8">
                     <div class="mx-auto flex max-w-xl flex-col items-center text-center sm:mx-0 sm:block sm:text-left">
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
-                        <p class="max-w-[290px] text-sm font-bold uppercase leading-snug tracking-[0.08em] text-[#ad7c28] sm:mb-2 sm:max-w-none sm:pl-2 sm:text-[11px] sm:tracking-[0.12em] sm:text-rotary-gold">
+                        <p class="home-hero-kicker max-w-full text-xs font-bold uppercase leading-snug tracking-[0.02em] text-[#ad7c28] sm:mb-2 sm:max-w-none sm:pl-2 sm:tracking-[0.12em] sm:text-rotary-gold">
                             Rotary International District 3291 presents
                         </p>
                         <img src="{{ asset('images/rotary-csr-awards-2026-tight.png') }}"
                              alt="Rotary CSR Awards 2026"
-                             class="-mt-2 h-auto w-full max-w-[205px] sm:-mt-5 sm:max-w-[310px]"
+                             class="home-award-logo -mt-2 h-auto w-full max-w-[205px] sm:-mt-5 sm:max-w-[310px]"
                              width="1246"
                              height="1263">
                         <div class="mb-4 hidden h-1 w-16 bg-rotary-gold sm:block"></div>
-                        <p class="max-w-sm font-display text-[2rem] font-semibold leading-[1.05] text-rotary-navy sm:max-w-none sm:text-4xl sm:leading-tight">Real impact deserves recognition.</p>
-                        <p class="mt-3 max-w-[330px] text-base leading-6 text-slate-700 sm:max-w-xl sm:leading-7 sm:text-lg">A platform to honour organisations and leaders creating a stronger, more inclusive tomorrow.</p>
+                        <p class="home-hero-title max-w-sm font-display text-[2rem] font-semibold leading-[1.05] text-rotary-navy sm:max-w-none sm:text-4xl sm:leading-tight">Real impact deserves recognition.</p>
+                        <p class="home-hero-description mt-3 max-w-[330px] text-base leading-6 text-slate-700 sm:max-w-xl sm:leading-7 sm:text-lg">A platform to honour organisations and leaders creating a stronger, more inclusive tomorrow.</p>
 
-                        <div class="mt-6 flex w-full max-w-[330px] flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+                        <div class="home-hero-actions mt-6 flex w-full max-w-[330px] flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                             @auth
                                 <a href="{{ url('/dashboard') }}" class="award-button w-full py-4 text-base sm:w-auto sm:py-3 sm:text-sm">Go to Dashboard</a>
                             @else
