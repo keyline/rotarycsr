@@ -1,12 +1,12 @@
 <nav x-data="{ open: false }" class="border-b border-rotary-gold/20 bg-white/95 shadow-sm backdrop-blur">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex h-24 justify-between">
+        <div class="flex h-28 justify-between">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-site-logo class="block h-14 w-auto sm:h-16" />
+                        <x-site-logo class="block h-auto w-48 sm:w-72" />
                     </a>
                 </div>
 

@@ -20,7 +20,7 @@
                         Rotary International District 3291 presents
                     </p>
                 </div>
-                <x-site-logo class="h-auto w-40 shrink-0 sm:w-64 lg:w-80" />
+                <x-site-logo class="h-auto w-40 shrink-0 sm:w-72 lg:w-96" />
             </div>
         </header>
 

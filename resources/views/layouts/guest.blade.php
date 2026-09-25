@@ -20,7 +20,7 @@
             <main class="award-sky-panel flex flex-1 flex-col items-center justify-center px-4 py-10" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 <div>
                     <a href="/">
-                        <x-site-logo class="h-20 max-w-full w-auto rounded-xl bg-white/95 px-4 py-3 shadow-lg sm:h-28" />
+                        <x-site-logo class="block h-auto w-72 max-w-full rounded-xl bg-white/95 px-4 py-3 shadow-lg sm:w-96" />
                     </a>
                 </div>
 
