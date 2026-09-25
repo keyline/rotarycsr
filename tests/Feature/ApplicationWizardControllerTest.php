@@ -207,11 +207,11 @@ class ApplicationWizardControllerTest extends TestCase
             'primary_contact_name' => 'Primary Person',
             'primary_contact_designation' => 'CSR Head',
             'primary_contact_email' => 'primary@example.com',
-            'primary_contact_mobile' => '+91 98765 43210',
+            'primary_contact_mobile' => '9876543210',
             'secondary_contact_name' => 'Secondary Person',
             'secondary_contact_designation' => 'CSR Manager',
             'secondary_contact_email' => 'secondary@example.com',
-            'secondary_contact_mobile' => '+91 91234 56789',
+            'secondary_contact_mobile' => '9123456789',
         ]);
 
         $response->assertRedirect(route('application.step', 4));
@@ -220,7 +220,7 @@ class ApplicationWizardControllerTest extends TestCase
             'corporate_presence' => 'national',
             'business_group_name' => 'Example Group',
             'primary_contact_email' => 'primary@example.com',
-            'secondary_contact_mobile' => '+91 91234 56789',
+            'secondary_contact_mobile' => '9123456789',
             'current_step' => 4,
         ]);
     }
@@ -255,6 +255,94 @@ class ApplicationWizardControllerTest extends TestCase
             'current_step' => 3,
             'primary_contact_name' => null,
         ]);
+    }
+
+    #[DataProvider('invalidContactDetails')]
+    public function test_invalid_contact_email_and_mobile_numbers_are_rejected(
+        string $field,
+        string $value,
+        string $message,
+    ): void {
+        [$applicant, $application] = $this->corporateApplicationAtStep(3);
+        $details = [
+            'corporate_foundation_name' => 'Example Foundation',
+            'csr_registration_number' => 'CSR00001234',
+            'industry_sector' => 'Manufacturing',
+            'head_office_location' => 'Kolkata',
+            'corporate_presence' => 'national',
+            'primary_contact_name' => 'Primary Person',
+            'primary_contact_designation' => 'CSR Head',
+            'primary_contact_email' => 'primary@example.com',
+            'primary_contact_mobile' => '9876543210',
+            'secondary_contact_name' => 'Secondary Person',
+            'secondary_contact_designation' => 'CSR Manager',
+            'secondary_contact_email' => 'secondary@example.com',
+            'secondary_contact_mobile' => '9123456789',
+        ];
+        $details[$field] = $value;
+
+        $response = $this->actingAs($applicant)
+            ->from(route('application.step', 3))
+            ->post(route('application.step', 3), $details);
+
+        $response->assertRedirect(route('application.step', 3));
+        $response->assertSessionHasErrors([$field => $message]);
+        $this->assertDatabaseHas('applications', [
+            'id' => $application->id,
+            'current_step' => 3,
+            'primary_contact_name' => null,
+            'secondary_contact_name' => null,
+        ]);
+        $this->assertDatabaseMissing('activity_logs', [
+            'event' => 'application.step_completed',
+            'subject_id' => $application->id,
+        ]);
+    }
+
+    public static function invalidContactDetails(): array
+    {
+        return [
+            'primary contact email format' => [
+                'primary_contact_email',
+                'not-an-email',
+                'The primary contact email field must be a valid email address.',
+            ],
+            'primary contact mobile below 10 digits' => [
+                'primary_contact_mobile',
+                '987654321',
+                'The primary contact mobile field must be 10 digits.',
+            ],
+            'primary contact mobile above 10 digits' => [
+                'primary_contact_mobile',
+                '98765432101',
+                'The primary contact mobile field must be 10 digits.',
+            ],
+            'primary contact mobile contains letters' => [
+                'primary_contact_mobile',
+                '98765abcde',
+                'The primary contact mobile field must be 10 digits.',
+            ],
+            'secondary contact email format' => [
+                'secondary_contact_email',
+                'not-an-email',
+                'The secondary contact email field must be a valid email address.',
+            ],
+            'secondary contact mobile below 10 digits' => [
+                'secondary_contact_mobile',
+                '912345678',
+                'The secondary contact mobile field must be 10 digits.',
+            ],
+            'secondary contact mobile above 10 digits' => [
+                'secondary_contact_mobile',
+                '91234567890',
+                'The secondary contact mobile field must be 10 digits.',
+            ],
+            'secondary contact mobile contains letters' => [
+                'secondary_contact_mobile',
+                '91234abcde',
+                'The secondary contact mobile field must be 10 digits.',
+            ],
+        ];
     }
 
     public function test_project_details_and_supporting_media_are_saved(): void

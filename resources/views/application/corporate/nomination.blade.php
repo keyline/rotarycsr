@@ -79,12 +79,15 @@
                 <div>
                     <x-input-label :for="$contact.'_contact_email'" value="Email ID" />
                     <x-text-input :id="$contact.'_contact_email'" :name="$contact.'_contact_email'" type="email" class="block mt-1 w-full"
+                                  maxlength="255" autocomplete="email"
                                   :value="old($contact.'_contact_email', $application->{$contact.'_contact_email'})" :required="$details['required']" />
                     <x-input-error :messages="$errors->get($contact.'_contact_email')" class="mt-1" />
                 </div>
                 <div>
                     <x-input-label :for="$contact.'_contact_mobile'" value="Mobile Number" />
                     <x-text-input :id="$contact.'_contact_mobile'" :name="$contact.'_contact_mobile'" type="tel" class="block mt-1 w-full"
+                                  inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" autocomplete="tel"
+                                  title="Enter exactly 10 digits."
                                   :value="old($contact.'_contact_mobile', $application->{$contact.'_contact_mobile'})" :required="$details['required']" />
                     <x-input-error :messages="$errors->get($contact.'_contact_mobile')" class="mt-1" />
                 </div>
