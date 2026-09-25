@@ -38,7 +38,7 @@ class ApplicantMessageMailer
 
         $resolvedSubject = strip_tags(strtr($subject, $replacements));
         $resolvedMessage = strtr($message, $replacements);
-        $html = '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#1f2937">'
+        $html = '<div style="line-height:1.7;">'
             .nl2br(e($resolvedMessage), false)
             .'</div>';
 

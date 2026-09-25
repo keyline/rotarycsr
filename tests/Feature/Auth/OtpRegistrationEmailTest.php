@@ -45,4 +45,21 @@ class OtpRegistrationEmailTest extends TestCase
             'individual' => ['individual'],
         ];
     }
+
+    public function test_verification_email_escapes_the_applicant_name(): void
+    {
+        Mail::fake();
+
+        $response = $this->post(route('register'), [
+            'name' => '<script>alert(1)</script>',
+            'email' => 'unsafe-name@example.com',
+            'applicant_type' => 'individual',
+        ]);
+
+        $response->assertRedirect(route('verification.otp'));
+        Mail::assertSent(TransactionalMessage::class, function (TransactionalMessage $message): bool {
+            return str_contains($message->htmlContent, '&lt;script&gt;')
+                && ! str_contains($message->htmlContent, '<script>');
+        });
+    }
 }

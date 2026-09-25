@@ -87,6 +87,7 @@ class PasswordResetTest extends TestCase
             'text' => 'auth.password-reset-email-text',
         ], $message->view);
         $this->assertNull($message->markdown);
+        $this->assertStringContainsString('https://rotarycsr3291.com/images/logo.png', $html);
         $this->assertStringContainsString('test-reset-token', $html);
         $this->assertStringContainsString('Reset Applicant', $html);
         $this->assertStringContainsString('test-reset-token', $text);

@@ -37,7 +37,11 @@ class TransactionalMessage extends Mailable
     public function content(): Content
     {
         return new Content(
-            htmlString: $this->htmlContent,
+            view: 'components.transactional-email',
+            with: [
+                'messageSubject' => $this->messageSubject,
+                'htmlContent' => $this->htmlContent,
+            ],
         );
     }
 

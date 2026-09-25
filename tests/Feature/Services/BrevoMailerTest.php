@@ -27,4 +27,13 @@ class BrevoMailerTest extends TestCase
                 && $message->htmlContent === '<p>Message body</p>';
         });
     }
+
+    public function test_transactional_email_renders_the_shared_branding_and_message(): void
+    {
+        $message = new TransactionalMessage('Application update', '<p>Message body</p>');
+
+        $message->assertSeeInHtml('https://rotarycsr3291.com/images/logo.png');
+        $message->assertSeeInHtml('Application update');
+        $message->assertSeeInHtml('Message body');
+    }
 }

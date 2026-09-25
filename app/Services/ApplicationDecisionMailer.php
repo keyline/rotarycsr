@@ -12,11 +12,11 @@ class ApplicationDecisionMailer
     public const DEFAULT_TEMPLATES = [
         'approved' => [
             'subject' => 'Your Rotary CSR Awards application has been approved',
-            'body' => '<p>Dear {name},</p><p>We are pleased to confirm that your {application_type} application for the Rotary CSR Awards 2026 has been approved.</p><p>Regards,<br>Rotary District 3291 CSR Awards Team</p>',
+            'body' => '<p>Dear {name},</p><p>We are pleased to confirm that your {application_type} application for the Rotary CSR Awards 2026 has been approved.</p><p>We will share further details with you by email.</p><p>Kind regards,<br>Rotary District 3291 CSR Awards Team</p>',
         ],
         'rejected' => [
             'subject' => 'Update on your Rotary CSR Awards application',
-            'body' => '<p>Dear {name},</p><p>After careful review, your {application_type} application for the Rotary CSR Awards 2026 was not selected.</p><p>Thank you for your participation.</p>',
+            'body' => '<p>Dear {name},</p><p>Thank you for submitting your {application_type} application for the Rotary CSR Awards 2026.</p><p>After careful review, your application was not selected. We appreciate the time and care you put into your submission.</p><p>Kind regards,<br>Rotary District 3291 CSR Awards Team</p>',
         ],
     ];
 

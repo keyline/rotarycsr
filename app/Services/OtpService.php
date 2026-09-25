@@ -61,11 +61,13 @@ class OtpService
 
     private function emailBody(string $name, string $otp): string
     {
+        $recipientName = e($name);
+
         return <<<HTML
-            <p>Hi {$name},</p>
-            <p>Your verification code for the Rotary District 3291 CSR Awards portal is:</p>
-            <p style="font-size:28px;font-weight:700;letter-spacing:4px;">{$otp}</p>
-            <p>This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
+            <p style="margin: 0 0 16px;">Dear {$recipientName},</p>
+            <p style="margin: 0 0 20px;">Use the verification code below to complete your Rotary CSR Awards registration.</p>
+            <p style="margin: 0 0 20px; padding: 16px 20px; border: 1px solid #dbe4ee; border-radius: 8px; background-color: #f3f6fa; color: #17458f; font-size: 30px; font-weight: 700; letter-spacing: 5px; text-align: center;">{$otp}</p>
+            <p style="margin: 0; color: #64748b; font-size: 13px;">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>
             HTML;
     }
 }
