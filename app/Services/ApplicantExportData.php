@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationSupportingDocument;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class ApplicantExportData
 {
@@ -97,7 +98,7 @@ class ApplicantExportData
                 return [
                     'name' => $this->text($document->original_name),
                     'type' => $this->text($document->media_type),
-                    'url' => route('application.supporting-documents.preview', $document),
+                    'url' => URL::signedRoute('application.supporting-documents.export-preview', ['document' => $document]),
                     'data_uri' => $dataUri,
                 ];
             })

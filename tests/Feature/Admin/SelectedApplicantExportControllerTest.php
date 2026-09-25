@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ApplicantExportData;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
@@ -95,19 +96,19 @@ class SelectedApplicantExportControllerTest extends TestCase
         $this->assertSame('Clean Water Programme', $record['Project Title']);
         $this->assertSame('Safe water access', $record['Brief Project Concept / Design']);
         $this->assertSame('\'=HYPERLINK("https://invalid.example")', $record['Unique Feature of the Initiative']);
-        $this->assertSame(route('application.supporting-documents.preview', $image), $record['Image 1 Link']);
-        $this->assertSame(route('application.supporting-documents.preview', $video), $record['Video 1 Link']);
+        $this->assertSame(URL::signedRoute('application.supporting-documents.export-preview', ['document' => $image]), $record['Image 1 Link']);
+        $this->assertSame(URL::signedRoute('application.supporting-documents.export-preview', ['document' => $video]), $record['Video 1 Link']);
 
         $imageColumn = array_search('Image 1 Link', $rows[0], true);
         $videoColumn = array_search('Video 1 Link', $rows[0], true);
         $this->assertNotFalse($imageColumn);
         $this->assertNotFalse($videoColumn);
         $this->assertSame(
-            route('application.supporting-documents.preview', $image),
+            $record['Image 1 Link'],
             $spreadsheet->getActiveSheet()->getCell(Coordinate::stringFromColumnIndex($imageColumn + 1).'2')->getHyperlink()->getUrl(),
         );
         $this->assertSame(
-            route('application.supporting-documents.preview', $video),
+            $record['Video 1 Link'],
             $spreadsheet->getActiveSheet()->getCell(Coordinate::stringFromColumnIndex($videoColumn + 1).'2')->getHyperlink()->getUrl(),
         );
         $this->assertCount(2, $rows);
@@ -170,7 +171,7 @@ class SelectedApplicantExportControllerTest extends TestCase
 
         $this->assertStringContainsString('max-height: 200px', $html);
         $this->assertStringContainsString('data:image/png;base64,', $html);
-        $this->assertStringContainsString(route('application.supporting-documents.preview', $video), $html);
+        $this->assertStringContainsString(URL::signedRoute('application.supporting-documents.export-preview', ['document' => $video]), $html);
         $this->assertStringContainsString('target="_blank"', $html);
         $this->assertStringNotContainsString('Email Verified', $html);
         $this->assertStringNotContainsString('Application Updated At', $html);

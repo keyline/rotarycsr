@@ -259,6 +259,18 @@ class ApplicationWizardController extends Controller
     ): StreamedResponse {
         $this->authorizeSupportingDocument($request, $document);
 
+        return $this->inlineSupportingDocument($document);
+    }
+
+    public function exportPreviewSupportingDocument(ApplicationSupportingDocument $document): StreamedResponse
+    {
+        abort_unless(Storage::disk('local')->exists($document->path), 404);
+
+        return $this->inlineSupportingDocument($document);
+    }
+
+    private function inlineSupportingDocument(ApplicationSupportingDocument $document): StreamedResponse
+    {
         return Storage::disk('local')->response(
             $document->path,
             $document->original_name,

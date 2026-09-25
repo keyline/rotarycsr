@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -558,6 +559,47 @@ class ApplicationWizardControllerTest extends TestCase
         $this->actingAs($admin)
             ->get(route('application.supporting-documents.preview', $document))
             ->assertOk();
+    }
+
+    public function test_signed_export_media_links_open_inline_for_guests_without_exposing_other_documents(): void
+    {
+        Storage::fake('local');
+        [, $application] = $this->corporateApplicationAtStep(4);
+        Storage::disk('local')->put('application-supporting-documents/evidence.jpg', 'image');
+        Storage::disk('local')->put('application-supporting-documents/evidence.mp4', 'video');
+        $image = $application->supportingDocuments()->create([
+            'path' => 'application-supporting-documents/evidence.jpg',
+            'original_name' => 'evidence.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 5,
+            'media_type' => 'image',
+        ]);
+        $video = $application->supportingDocuments()->create([
+            'path' => 'application-supporting-documents/evidence.mp4',
+            'original_name' => 'evidence.mp4',
+            'mime_type' => 'video/mp4',
+            'size' => 5,
+            'media_type' => 'video',
+        ]);
+
+        $imageUrl = URL::signedRoute('application.supporting-documents.export-preview', ['document' => $image]);
+        $videoUrl = URL::signedRoute('application.supporting-documents.export-preview', ['document' => $video]);
+
+        $imageResponse = $this->get($imageUrl)
+            ->assertOk()
+            ->assertHeader('content-type', 'image/jpeg');
+        $this->assertStringStartsWith('inline;', $imageResponse->headers->get('content-disposition'));
+        $videoResponse = $this->get($videoUrl)
+            ->assertOk()
+            ->assertHeader('content-type', 'video/mp4');
+        $this->assertStringStartsWith('inline;', $videoResponse->headers->get('content-disposition'));
+        $this->get(route('application.supporting-documents.export-preview', $image))->assertForbidden();
+        $this->get(str_replace('/'.$image->id.'/export-preview', '/'.$video->id.'/export-preview', $imageUrl))
+            ->assertForbidden();
+        $this->get(route('application.supporting-documents.preview', $image))
+            ->assertRedirect(route('login'));
+        Storage::disk('local')->delete($image->path);
+        $this->get($imageUrl)->assertNotFound();
     }
 
     public function test_submission_assigns_separate_sequential_ids_for_each_award(): void

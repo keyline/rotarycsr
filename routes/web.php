@@ -24,6 +24,10 @@ Route::get('/apply', function () {
     return view('apply');
 })->name('apply');
 
+Route::get('/application/supporting-documents/{document}/export-preview', [ApplicationWizardController::class, 'exportPreviewSupportingDocument'])
+    ->middleware('signed')
+    ->name('application.supporting-documents.export-preview');
+
 Route::get('/dashboard', function (Request $request) {
     if (Auth::user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
