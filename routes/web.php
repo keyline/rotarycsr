@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/application/supporting-documents/{document}', [ApplicationWizardController::class, 'downloadSupportingDocument'])
+        ->name('application.supporting-documents.download');
 });
 
 Route::middleware(['auth', 'not-blacklisted'])->prefix('application')->name('application.')->group(function () {

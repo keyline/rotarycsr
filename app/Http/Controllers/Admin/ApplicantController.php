@@ -35,7 +35,7 @@ class ApplicantController extends Controller
 
         return view('admin.applicants._show', [
             'applicant' => $applicant,
-            'application' => $applicant->application,
+            'application' => $applicant->application?->load('supportingDocuments'),
         ]);
     }
 
@@ -49,7 +49,7 @@ class ApplicantController extends Controller
             properties: $request->only(['search', 'applicant_type', 'status'])
         );
 
-        $columns = ['ID', 'Name', 'Company Name', 'Email', 'Category', 'Verified', 'Review Status', 'Registered At'];
+        $columns = ['ID', 'Application ID', 'Name', 'Company Name', 'Email', 'Category', 'Verified', 'Review Status', 'Registered At'];
 
         return response()->streamDownload(function () use ($applicants, $columns) {
             $handle = fopen('php://output', 'w');
@@ -58,6 +58,7 @@ class ApplicantController extends Controller
             foreach ($applicants as $applicant) {
                 fputcsv($handle, [
                     $applicant->id,
+                    $applicant->application?->reference_number,
                     $applicant->name,
                     $applicant->company_name,
                     $applicant->email,

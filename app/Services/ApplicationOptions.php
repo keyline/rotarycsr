@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Models\Setting;
+use App\Rules\MaxWords;
 use Illuminate\Support\Carbon;
 
 class ApplicationOptions
 {
-    public const CORPORATE_CATEGORIES = [
-        'small' => [
-            'label' => 'Small Corporate',
-            'help' => 'Average annual CSR expenditure: up to ₹2 crore',
+    public const COMPANY_SIZES = [
+        'micro' => [
+            'label' => 'Micro',
+            'help' => 'Up to 100 employees',
         ],
-        'medium' => [
-            'label' => 'Medium Corporate',
-            'help' => 'Average annual CSR expenditure: above ₹2 crore and up to ₹10 crore',
+        'macro' => [
+            'label' => 'Macro',
+            'help' => '101–499 employees',
         ],
-        'large' => [
-            'label' => 'Large Corporate',
-            'help' => 'Average annual CSR expenditure: above ₹10 crore',
+        'mega' => [
+            'label' => 'Mega',
+            'help' => '500 employees and above',
         ],
     ];
 
@@ -29,7 +30,13 @@ class ApplicationOptions
         'maternal_child_health' => 'Maternal and Child Health',
         'education_literacy' => 'Basic Education and Literacy',
         'economic_development' => 'Community Economic Development',
-        'environment' => 'Supporting the Environment: Protecting natural resources and promoting environmental sustainability',
+        'environment' => 'Environment & Nature Protection / Conservation',
+    ];
+
+    public const CORPORATE_PRESENCE_OPTIONS = [
+        'national' => 'National',
+        'regional' => 'Regional',
+        'state' => 'State',
     ];
 
     /** The five field names that make up one CSR project block (Category B). */
@@ -46,10 +53,10 @@ class ApplicationOptions
     public static function stepTitle(string $applicantType, string $stepKey): string
     {
         return match ($stepKey) {
-            'category' => 'Corporate Category',
+            'category' => 'Company Information',
             'focus' => 'Primary Rotary Area of Focus',
-            'nomination' => 'CSR Project Nomination',
-            'assessment' => 'Project Assessment',
+            'nomination' => 'Corporate / Applicant Details',
+            'assessment' => 'Project Details',
             'profile' => 'Personal & Professional Details',
             'projects' => 'CSR Projects',
             'review' => 'Review & Submit',
@@ -74,7 +81,8 @@ class ApplicationOptions
     {
         return match ($stepKey) {
             'category' => [
-                'corporate_category' => ['required', 'in:'.implode(',', array_keys(self::CORPORATE_CATEGORIES))],
+                'company_size' => ['required', 'in:'.implode(',', array_keys(self::COMPANY_SIZES))],
+                'company_turnover' => ['required', 'numeric', 'min:0', 'max:9999999999999.99'],
             ],
             'focus' => [
                 'focus_area' => ['required', 'in:'.implode(',', array_keys(self::FOCUS_AREAS))],
@@ -84,18 +92,29 @@ class ApplicationOptions
                 'csr_registration_number' => ['required', 'string', 'max:255'],
                 'industry_sector' => ['required', 'string', 'max:255'],
                 'head_office_location' => ['required', 'string', 'max:255'],
-                'project_name' => ['required', 'string', 'max:255'],
-                'project_period' => ['required', 'string', 'max:255'],
-                'geographic_coverage' => ['required', 'string', 'max:255'],
-                'csr_budget' => ['required', 'numeric', 'min:0'],
+                'corporate_presence' => ['required', 'in:'.implode(',', array_keys(self::CORPORATE_PRESENCE_OPTIONS))],
+                'business_group_name' => ['nullable', 'string', 'max:255'],
+                'primary_contact_name' => ['required', 'string', 'max:255'],
+                'primary_contact_designation' => ['required', 'string', 'max:255'],
+                'primary_contact_email' => ['required', 'email', 'max:255'],
+                'primary_contact_mobile' => ['required', 'string', 'max:30'],
+                'secondary_contact_name' => ['nullable', 'required_with:secondary_contact_designation,secondary_contact_email,secondary_contact_mobile', 'string', 'max:255'],
+                'secondary_contact_designation' => ['nullable', 'required_with:secondary_contact_name,secondary_contact_email,secondary_contact_mobile', 'string', 'max:255'],
+                'secondary_contact_email' => ['nullable', 'required_with:secondary_contact_name,secondary_contact_designation,secondary_contact_mobile', 'email', 'max:255'],
+                'secondary_contact_mobile' => ['nullable', 'required_with:secondary_contact_name,secondary_contact_designation,secondary_contact_email', 'string', 'max:30'],
             ],
             'assessment' => [
-                'problem_addressed' => ['required', 'string'],
-                'intervention_design' => ['required', 'string'],
+                'project_name' => ['required', 'string', 'max:255'],
+                'project_launch_date' => ['required', 'date', 'after_or_equal:2025-04-01', 'before_or_equal:2026-03-31'],
+                'project_completion_status' => ['required', 'in:completed,continuing'],
+                'project_completion_date' => ['nullable', 'required_if:project_completion_status,completed', 'date', 'after_or_equal:project_launch_date'],
+                'geographic_coverage' => ['required', 'string', 'max:255'],
+                'csr_budget' => ['required', 'numeric', 'min:0'],
+                'implementation_partners' => ['nullable', 'string'],
                 'beneficiaries_impacted' => ['required', 'string'],
-                'outcomes_impact' => ['required', 'string'],
-                'implementation_partners' => ['required', 'string'],
-                'additional_info' => ['nullable', 'string'],
+                'intervention_design' => ['required', 'string', new MaxWords(100)],
+                'unique_feature' => ['nullable', 'string', new MaxWords(100)],
+                'outcomes_impact' => ['required', 'string', new MaxWords(150)],
             ],
             'profile' => [
                 'ind_designation' => ['required', 'string', 'max:255'],

@@ -21,7 +21,7 @@
             @endif
 
             <div class="award-card p-6 sm:p-8">
-                <form id="wizard-form" method="POST" action="{{ route('application.step', $step) }}">
+                <form id="wizard-form" method="POST" action="{{ route('application.step', $step) }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="space-y-5 {{ $locked ? 'opacity-60 pointer-events-none' : '' }}">

@@ -16,7 +16,8 @@
         </span>
         <p class="text-xs text-gray-400 mt-1.5">
             @if ($application?->isSubmitted())
-                Submitted {{ $application->submitted_at->format('d M Y, h:i A') }}
+                Submitted {{ $application->submitted_at->format('d M Y, h:i A') }}<br>
+                <span class="font-semibold text-[#17458F]">{{ $application->reference_number }}</span>
             @elseif ($application)
                 Draft — step {{ $application->current_step }} of {{ $application->totalSteps() }}
             @else
@@ -73,27 +74,42 @@
 @elseif ($isCorporate)
     <div class="space-y-4">
         <div>
-            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Corporate Category</h4>
-            <p class="text-sm text-gray-700">{{ \App\Services\ApplicationOptions::CORPORATE_CATEGORIES[$application->corporate_category]['label'] ?? '—' }}</p>
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Company Information</h4>
+            <dl class="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+                <div>
+                    <dt class="text-xs text-gray-400">Company Size</dt>
+                    <dd class="text-gray-700">{{ \App\Services\ApplicationOptions::COMPANY_SIZES[$application->company_size]['label'] ?? '—' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs text-gray-400">Turnover — FY 2025–2026</dt>
+                    <dd class="text-gray-700">{{ $application->company_turnover !== null ? '₹'.number_format((float) $application->company_turnover, 2).' Crore' : '—' }}</dd>
+                </div>
+            </dl>
         </div>
 
         <div>
-            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Primary Rotary Area of Focus</h4>
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Area of Focus</h4>
             <p class="text-sm text-gray-700">{{ \App\Services\ApplicationOptions::FOCUS_AREAS[$application->focus_area] ?? '—' }}</p>
         </div>
 
         <div>
-            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">CSR Project Nomination</h4>
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Corporate / Applicant Details</h4>
             <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
                 @foreach ([
                     'Corporate / Foundation Name' => $application->corporate_foundation_name,
                     'CSR Registration Number' => $application->csr_registration_number,
                     'Industry / Sector' => $application->industry_sector,
-                    'Head Office / Project Location' => $application->head_office_location,
-                    'Project Name' => $application->project_name,
-                    'Project Period' => $application->project_period,
-                    'Geographic Coverage' => $application->geographic_coverage,
-                    'CSR Budget' => $application->csr_budget !== null ? '₹'.number_format((float) $application->csr_budget, 2) : null,
+                    'Registered / Head Office Address' => $application->head_office_location,
+                    'Presence' => \App\Services\ApplicationOptions::CORPORATE_PRESENCE_OPTIONS[$application->corporate_presence] ?? null,
+                    'Name of Business Group' => $application->business_group_name,
+                    'Primary Contact — Name' => $application->primary_contact_name,
+                    'Primary Contact — Designation' => $application->primary_contact_designation,
+                    'Primary Contact — Email ID' => $application->primary_contact_email,
+                    'Primary Contact — Mobile Number' => $application->primary_contact_mobile,
+                    'Secondary Contact — Name' => $application->secondary_contact_name,
+                    'Secondary Contact — Designation' => $application->secondary_contact_designation,
+                    'Secondary Contact — Email ID' => $application->secondary_contact_email,
+                    'Secondary Contact — Mobile Number' => $application->secondary_contact_mobile,
                 ] as $label => $value)
                     <div>
                         <dt class="text-xs text-gray-400">{{ $label }}</dt>
@@ -104,26 +120,49 @@
         </div>
 
         <div>
-            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Project Assessment</h4>
-            <dl class="space-y-2.5 text-sm">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Project Details</h4>
+            <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
                 @foreach ([
-                    'What problem was addressed?' => $application->problem_addressed,
-                    'CSR intervention / project design' => $application->intervention_design,
-                    'Beneficiaries impacted' => $application->beneficiaries_impacted,
-                    'Outcomes / impact achieved' => $application->outcomes_impact,
-                    'Implementation / community partners' => $application->implementation_partners,
-                    'Additional information' => $application->additional_info,
+                    'Project Title' => $application->project_name,
+                    'Project Launch Date' => $application->project_launch_date?->format('d M Y'),
+                    'Project Completion Date / Continuing' => $application->project_completion_status === 'continuing' ? 'Continuing' : $application->project_completion_date?->format('d M Y'),
+                    'Geographical Coverage' => $application->geographic_coverage,
+                    'Execution Partners' => $application->implementation_partners,
+                    'CSR Budget / Project Cost' => $application->csr_budget !== null ? '₹'.number_format((float) $application->csr_budget, 2) : null,
+                    'Direct and Indirect Beneficiaries' => $application->beneficiaries_impacted,
                 ] as $label => $value)
                     <div>
                         <dt class="text-xs text-gray-400">{{ $label }}</dt>
-                        <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $value ?: '—' !!}</dd>
+                        <dd class="text-gray-700">{{ $value ?: '—' }}</dd>
                     </div>
                 @endforeach
             </dl>
+            <dl class="mt-3 space-y-2.5 text-sm">
+                @foreach ([
+                    'Brief Project Concept / Design' => $application->intervention_design,
+                    'Unique Feature of the Initiative' => $application->unique_feature,
+                    'Impact Assessment' => $application->outcomes_impact,
+                ] as $label => $value)
+                    <div>
+                        <dt class="text-xs text-gray-400">{{ $label }}</dt>
+                        <dd class="whitespace-pre-line text-gray-700">{{ $value ? strip_tags($value) : '—' }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+            <div class="mt-4 border-t border-gray-100 pt-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Supporting Documents / Proof</p>
+                @forelse ($application->supportingDocuments as $document)
+                    <a href="{{ route('application.supporting-documents.download', $document) }}" class="mt-1.5 block text-sm font-semibold text-[#17458F] hover:underline">
+                        {{ $document->original_name }} ({{ strtoupper($document->media_type) }})
+                    </a>
+                @empty
+                    <p class="mt-1.5 text-sm text-gray-400">No supporting media uploaded.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 @else
-    @php $projects = collect($application->ind_projects ?? [])->filter(fn ($p) => ! empty($p)); @endphp
+    @php $projects = collect($application->ind_projects ?? [])->filter(fn ($project) => ! empty($project)); @endphp
     <div class="space-y-4">
         <div>
             <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Personal &amp; Professional Details</h4>
@@ -150,30 +189,26 @@
             </dl>
         </div>
 
-        @forelse ($projects as $i => $project)
+        @forelse ($projects as $index => $project)
             <div>
-                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">CSR Project {{ $i + 1 }}</h4>
+                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">CSR Project {{ $index + 1 }}</h4>
                 <dl class="space-y-2.5 text-sm">
-                    <div>
-                        <dt class="text-xs text-gray-400">Social problems identified and addressed</dt>
-                        <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $project['problem'] ?? '—' !!}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs text-gray-400">CSR Intervention designed</dt>
-                        <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $project['intervention'] ?? '—' !!}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs text-gray-400">CSR Investments used</dt>
-                        <dd class="text-gray-700">{{ $project['investment'] ?? '—' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs text-gray-400">Beneficiaries impacted</dt>
-                        <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $project['beneficiaries'] ?? '—' !!}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs text-gray-400">Outcomes / impact achieved</dt>
-                        <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $project['outcomes'] ?? '—' !!}</dd>
-                    </div>
+                    @foreach ([
+                        'Social problems identified and addressed' => $project['problem'] ?? null,
+                        'CSR Intervention designed' => $project['intervention'] ?? null,
+                        'CSR Investments used' => $project['investment'] ?? null,
+                        'Beneficiaries impacted' => $project['beneficiaries'] ?? null,
+                        'Outcomes / impact achieved' => $project['outcomes'] ?? null,
+                    ] as $label => $value)
+                        <div>
+                            <dt class="text-xs text-gray-400">{{ $label }}</dt>
+                            @if ($label === 'CSR Investments used')
+                                <dd class="text-gray-700">{{ $value ?: '—' }}</dd>
+                            @else
+                                <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $value ?: '—' !!}</dd>
+                            @endif
+                        </div>
+                    @endforeach
                 </dl>
             </div>
         @empty

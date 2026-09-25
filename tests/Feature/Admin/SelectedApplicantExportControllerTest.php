@@ -30,10 +30,12 @@ class SelectedApplicantExportControllerTest extends TestCase
             'user_id' => $selected->id,
             'applicant_type' => 'corporate',
             'status' => 'submitted',
-            'corporate_category' => 'large',
+            'reference_number' => 'RICSR/CP/0001',
+            'company_size' => 'mega',
+            'company_turnover' => '5000.25',
             'project_name' => 'Clean Water Programme',
-            'problem_addressed' => '<p>Safe water access</p>',
-            'additional_info' => '=HYPERLINK("https://invalid.example")',
+            'intervention_design' => '<p>Safe water access</p>',
+            'unique_feature' => '=HYPERLINK("https://invalid.example")',
         ]);
         Application::create([
             'user_id' => $notSelected->id,
@@ -53,9 +55,12 @@ class SelectedApplicantExportControllerTest extends TestCase
         $record = array_combine($rows[0], $rows[1]);
 
         $this->assertSame('Selected Applicant', $record['Name']);
-        $this->assertSame('Clean Water Programme', $record['Project Name']);
-        $this->assertSame('Safe water access', $record['Problem Addressed']);
-        $this->assertSame('\'=HYPERLINK("https://invalid.example")', $record['Additional Information']);
+        $this->assertSame('Mega', $record['Company Size']);
+        $this->assertSame(5000.25, $record['Turnover FY 2025–2026 (₹ Crore)']);
+        $this->assertSame('RICSR/CP/0001', $record['Application ID']);
+        $this->assertSame('Clean Water Programme', $record['Project Title']);
+        $this->assertSame('Safe water access', $record['Brief Project Concept / Design']);
+        $this->assertSame('\'=HYPERLINK("https://invalid.example")', $record['Unique Feature of the Initiative']);
         $this->assertCount(2, $rows);
         $this->assertNotContains('Excluded Applicant', $rows[1]);
         $spreadsheet->disconnectWorksheets();

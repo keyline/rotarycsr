@@ -27,7 +27,7 @@ class SelectedApplicantExportController extends Controller
         $applicants = User::query()
             ->where('role', 'applicant')
             ->whereKey($validated['applicant_ids'])
-            ->with('application.reviewer')
+            ->with(['application.reviewer', 'application.supportingDocuments'])
             ->orderBy('name')
             ->get();
         $records = $applicants->map(fn (User $applicant): array => $exportData->for($applicant));

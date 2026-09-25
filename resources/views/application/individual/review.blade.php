@@ -14,6 +14,7 @@
 
             @if ($application->isSubmitted())
                 <div class="mb-6 px-4 py-3 text-sm bg-green-50 text-green-700 border border-green-200 rounded-md">
+                    <span class="font-bold">Application ID: {{ $application->reference_number }}</span><br>
                     Submitted on {{ $application->submitted_at->format('d M Y, h:i A') }}. This application is now read-only.
                 </div>
             @elseif ($locked)

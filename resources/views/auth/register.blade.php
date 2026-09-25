@@ -3,7 +3,7 @@
         <span class="text-sm text-gray-700">
             Applying as
             <span class="font-semibold text-[#17458F]">
-                {{ $applicantType === 'corporate' ? 'Corporate Excellence Award' : 'CSR Leader of the Year (Individual)' }}
+                {{ $applicantType === 'corporate' ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}
             </span>
         </span>
         <a href="{{ route('apply') }}" class="text-xs font-semibold text-[#17458F] underline hover:text-[#123669]">Change</a>

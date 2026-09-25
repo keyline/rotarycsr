@@ -13,6 +13,7 @@
         const data = {};
         new FormData(form).forEach((value, key) => {
             if (key === '_token' || key === '_method') return;
+            if (value instanceof File) return;
             data[key] = value;
         });
         return data;

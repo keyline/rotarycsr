@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\ApplicationSupportingDocument;
 use App\Services\ActivityLogger;
 use App\Services\ApplicationOptions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\File;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApplicationWizardController extends Controller
 {
@@ -53,7 +58,22 @@ class ApplicationWizardController extends Controller
         }
 
         $rules = ApplicationOptions::rulesForStep($type, $stepKey);
+
+        if ($type === 'corporate' && $stepKey === 'assessment') {
+            $remainingDocumentSlots = max(0, 10 - $application->supportingDocuments()->count());
+            $rules['supporting_documents'] = ['nullable', 'array', 'max:'.$remainingDocumentSlots];
+            $rules['supporting_documents.*'] = [
+                File::types(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm'])->max('50mb'),
+            ];
+        }
+
         $validated = $request->validate($rules);
+        $supportingDocuments = $validated['supporting_documents'] ?? [];
+        unset($validated['supporting_documents']);
+
+        if (($validated['project_completion_status'] ?? null) === 'continuing') {
+            $validated['project_completion_date'] = null;
+        }
 
         if ($stepKey === 'projects') {
             $this->saveProjects($application, $validated);
@@ -63,6 +83,24 @@ class ApplicationWizardController extends Controller
 
         $application->current_step = max($application->current_step, $step + 1);
         $application->save();
+
+        foreach ($supportingDocuments as $supportingDocument) {
+            $path = $supportingDocument->store("application-supporting-documents/{$application->id}", 'local');
+
+            if ($path === false) {
+                throw new \RuntimeException('Unable to store the supporting document.');
+            }
+
+            $mimeType = $supportingDocument->getMimeType() ?: 'application/octet-stream';
+
+            $application->supportingDocuments()->create([
+                'path' => $path,
+                'original_name' => $supportingDocument->getClientOriginalName(),
+                'mime_type' => $mimeType,
+                'size' => $supportingDocument->getSize(),
+                'media_type' => str_starts_with($mimeType, 'image/') ? 'image' : 'video',
+            ]);
+        }
 
         ActivityLogger::log(
             'application.step_completed',
@@ -141,9 +179,46 @@ class ApplicationWizardController extends Controller
             Validator::make($values, $rules)->validate();
         }
 
-        $application->status = 'submitted';
-        $application->submitted_at = now();
-        $application->save();
+        $didSubmit = false;
+
+        DB::transaction(function () use ($application, &$didSubmit): void {
+            $lockedApplication = Application::query()->lockForUpdate()->findOrFail($application->id);
+
+            if ($lockedApplication->isSubmitted()) {
+                return;
+            }
+
+            if ($lockedApplication->reference_number === null) {
+                $sequence = DB::table('application_number_sequences')
+                    ->where('applicant_type', $lockedApplication->applicant_type)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($sequence === null) {
+                    throw new \RuntimeException('The application number sequence is not initialized.');
+                }
+
+                $nextNumber = $sequence->last_number + 1;
+                $prefix = $lockedApplication->applicant_type === 'corporate' ? 'CP' : 'IN';
+
+                DB::table('application_number_sequences')
+                    ->where('applicant_type', $lockedApplication->applicant_type)
+                    ->update(['last_number' => $nextNumber]);
+
+                $lockedApplication->reference_number = sprintf('RICSR/%s/%04d', $prefix, $nextNumber);
+            }
+
+            $lockedApplication->status = 'submitted';
+            $lockedApplication->submitted_at = now();
+            $lockedApplication->save();
+            $didSubmit = true;
+        });
+
+        $application->refresh();
+
+        if (! $didSubmit) {
+            return redirect()->route('dashboard')->with('status', 'This application is already locked.');
+        }
 
         ActivityLogger::log(
             'application.submitted',
@@ -151,7 +226,27 @@ class ApplicationWizardController extends Controller
             $application,
         );
 
-        return redirect()->route('dashboard')->with('status', 'Your application has been submitted successfully.');
+        return redirect()->route('dashboard')->with(
+            'status',
+            "Your application has been submitted successfully. Application ID: {$application->reference_number}",
+        );
+    }
+
+    public function downloadSupportingDocument(
+        Request $request,
+        ApplicationSupportingDocument $document,
+    ): StreamedResponse {
+        abort_unless(
+            $request->user()->isAdmin() || $document->application()->where('user_id', $request->user()->id)->exists(),
+            404,
+        );
+        abort_unless(Storage::disk('local')->exists($document->path), 404);
+
+        return Storage::disk('local')->download(
+            $document->path,
+            $document->original_name,
+            ['Content-Type' => $document->mime_type],
+        );
     }
 
     /**

@@ -88,9 +88,15 @@
                             <h3 class="mt-1 font-display text-2xl font-bold text-rotary-navy">Thank you for your submission, {{ $user->name }}.</h3>
                             <p class="mt-2 text-sm leading-6 text-gray-600">
                                 We have successfully received your application for the
-                                <span class="font-semibold text-gray-800">{{ $isCorporate ? 'Corporate Excellence Award' : 'CSR Leader of the Year' }}</span>.
+                                <span class="font-semibold text-gray-800">{{ $isCorporate ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}</span>.
                                 The Rotary District 3291 CSR Awards team will review your submission and share any updates with you by email.
                             </p>
+                            <div class="mt-4 inline-flex rounded-lg border border-[#17458F]/20 bg-[#17458F]/5 px-4 py-3">
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-[#17458F]">Application ID</p>
+                                    <p class="mt-1 font-mono text-lg font-bold text-rotary-navy">{{ $application->reference_number }}</p>
+                                </div>
+                            </div>
                             <p class="mt-3 text-xs font-medium text-gray-500">
                                 Submitted on {{ $application->submitted_at->format('d M Y, h:i A') }}. Your application is now read-only.
                             </p>
