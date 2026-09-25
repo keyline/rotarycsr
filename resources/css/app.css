@@ -47,8 +47,26 @@
 }
 
 @media (max-width: 639px) {
-    .award-hero {
-        background-image: linear-gradient(90deg, rgba(255, 250, 240, 0.97), rgba(255, 250, 240, 0.82)), var(--award-background-image);
+    .home-hero {
+        overflow: hidden;
+        background-image: linear-gradient(115deg, #fffaf2 3%, #f7fbff 48%, #cae8ff 100%);
+    }
+
+    .home-hero::before {
+        position: absolute;
+        inset: auto 0 0;
+        height: 400px;
+        background-image: var(--award-background-image);
+        background-position: 70% bottom;
+        background-repeat: no-repeat;
+        background-size: auto 400px;
+        content: '';
+        -webkit-mask-image: linear-gradient(to bottom, transparent, #000 38%);
+        mask-image: linear-gradient(to bottom, transparent, #000 38%);
+    }
+
+    .home-hero .award-button-gold {
+        background-image: linear-gradient(90deg, #d29c37, #e7b84f 55%, #c8942f);
     }
 }
 
