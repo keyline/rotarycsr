@@ -20,8 +20,8 @@
         </header>
 
         <main class="flex-1">
-            <section class="award-hero flex min-h-[650px] items-center pt-36 sm:min-h-[680px] sm:pt-40 lg:pt-32" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
-                <div class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
+            <section class="award-hero flex min-h-[650px] items-center pt-28 sm:min-h-[680px] sm:pt-40 lg:pt-32" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+                <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 sm:py-10">
                     <div class="max-w-xl">
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
                         <p class="mb-2 pl-2 text-[9px] font-bold uppercase leading-snug tracking-[0.12em] text-rotary-gold sm:text-[11px]">
@@ -33,7 +33,7 @@
                              width="1246"
                              height="1263">
                         <div class="mb-4 h-1 w-16 bg-rotary-gold"></div>
-                        <p class="font-display text-3xl font-semibold leading-tight text-rotary-navy sm:text-4xl">Real impact deserves recognition.</p>
+                        <p class="font-display text-2xl font-semibold leading-tight text-rotary-navy sm:text-4xl">Real impact deserves recognition.</p>
                         <p class="mt-3 max-w-xl text-base leading-7 text-slate-700 sm:text-lg">A platform to honour organisations and leaders creating a stronger, more inclusive tomorrow.</p>
 
                         <div class="mt-6 flex flex-wrap items-center gap-4">

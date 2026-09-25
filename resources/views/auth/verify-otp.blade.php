@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
-        We've sent a 6-digit verification code to <span class="font-semibold text-gray-800">{{ $email }}</span>.
+        We've sent a 6-digit verification code to <span class="break-all font-semibold text-gray-800">{{ $email }}</span>.
         Enter it below to continue.
     </div>
 

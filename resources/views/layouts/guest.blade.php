@@ -24,7 +24,7 @@
                     </a>
                 </div>
 
-                <div class="award-card mt-7 w-full px-6 py-7 sm:max-w-md sm:px-8">
+                <div class="award-card mt-7 w-full px-4 py-6 sm:max-w-md sm:px-8 sm:py-7">
                     {{ $slot }}
                 </div>
             </main>

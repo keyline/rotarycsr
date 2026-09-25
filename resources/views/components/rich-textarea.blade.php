@@ -15,7 +15,7 @@
     </div>
 
     <div data-rich-editor-input contenteditable="true"
-         class="px-3 py-2 text-sm text-gray-900 focus:outline-none [&_ul]:list-disc [&_ul]:pl-5"
+         class="break-words px-3 py-2 text-sm text-gray-900 focus:outline-none [&_ul]:list-disc [&_ul]:pl-5"
          style="min-height: {{ $minHeight }}px">{!! $value !!}</div>
 
     <textarea name="{{ $name }}" id="{{ $id }}" class="hidden">{{ $value }}</textarea>

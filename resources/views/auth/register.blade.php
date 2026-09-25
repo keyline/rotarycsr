@@ -1,12 +1,12 @@
 <x-guest-layout>
-    <div class="flex items-center justify-between mb-4 px-3 py-2 bg-[#17458F]/5 border border-[#17458F]/20 rounded-md">
-        <span class="text-sm text-gray-700">
+    <div class="mb-4 flex flex-wrap items-start justify-between gap-2 rounded-md border border-[#17458F]/20 bg-[#17458F]/5 px-3 py-2">
+        <span class="min-w-0 flex-1 text-sm text-gray-700">
             Applying as
             <span class="font-semibold text-[#17458F]">
                 {{ $applicantType === 'corporate' ? 'CSR Project Excellence Award' : 'Corporate CSR Leader Award' }}
             </span>
         </span>
-        <a href="{{ route('apply') }}" class="text-xs font-semibold text-[#17458F] underline hover:text-[#123669]">Change</a>
+        <a href="{{ route('apply') }}" class="shrink-0 text-xs font-semibold text-[#17458F] underline hover:text-[#123669]">Change</a>
     </div>
 
     <form method="POST" action="{{ route('register') }}">
@@ -44,12 +44,12 @@
             <p class="mt-1 text-xs text-gray-500">We'll send a 6-digit verification code to this address.</p>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button>
                 {{ __('Send Verification Code') }}
             </x-primary-button>
         </div>

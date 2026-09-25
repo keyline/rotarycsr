@@ -29,7 +29,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="award-sky-panel min-h-[calc(100vh-10rem)] flex-1 bg-fixed" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+            <main class="award-sky-panel min-h-[calc(100vh-10rem)] flex-1 bg-scroll sm:bg-fixed" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 {{ $slot }}
             </main>
 

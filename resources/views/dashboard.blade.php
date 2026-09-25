@@ -12,8 +12,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-10 sm:py-14">
-        <div class="mx-auto flex max-w-3xl flex-col gap-6 sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-14">
+        <div class="mx-auto flex max-w-3xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
 
             @if (session('status') && ! $application->isSubmitted())
                 <div class="px-4 py-3 text-sm font-medium bg-green-50 text-green-700 border border-green-200 rounded-md">
@@ -23,11 +23,11 @@
 
             @unless ($application->isSubmitted())
                 <!-- Welcome -->
-                <div class="award-card p-6 sm:p-8">
+                <div class="award-card p-5 sm:p-8">
                 <div class="flex items-start justify-between gap-4 flex-wrap">
-                    <div>
+                    <div class="min-w-0 flex-1">
                         <p class="award-kicker mb-2">Rotary CSR Awards 2026</p>
-                        <h3 class="font-display text-3xl font-bold text-rotary-navy">
+                        <h3 class="break-words font-display text-2xl font-bold text-rotary-navy sm:text-3xl">
                             Welcome, {{ $user->name }}
                         </h3>
                         <p class="mt-2 text-base leading-7 text-gray-600">
@@ -66,7 +66,7 @@
 
             @unless ($application->isSubmitted())
                 <!-- Instructions -->
-                <div class="award-card p-6 sm:p-8">
+                <div class="award-card p-5 sm:p-8">
                     <h3 class="text-sm font-semibold text-gray-800 mb-3">How it works</h3>
                     <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
                         @foreach ($howItWorksSteps as $step)
@@ -77,24 +77,24 @@
             @endunless
 
             <!-- Application status -->
-            <div class="award-card p-6 sm:p-8">
+            <div class="award-card p-5 sm:p-8">
                 @if ($application->isSubmitted())
-                    <div class="flex items-start gap-4">
+                    <div class="flex flex-col items-start gap-4 sm:flex-row">
                         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         </span>
                         <div class="min-w-0">
                             <p class="text-xs font-bold uppercase tracking-wider text-green-700">Application successfully received</p>
-                            <h3 class="mt-1 font-display text-2xl font-bold text-rotary-navy">Thank you for your submission, {{ $user->name }}.</h3>
+                            <h3 class="mt-1 break-words font-display text-2xl font-bold text-rotary-navy">Thank you for your submission, {{ $user->name }}.</h3>
                             <p class="mt-2 text-sm leading-6 text-gray-600">
                                 We have successfully received your application for the
                                 <span class="font-semibold text-gray-800">{{ $awardName }}</span>.
                                 The Rotary District 3291 CSR Awards team will review your submission and share any updates with you by email.
                             </p>
-                            <div class="mt-4 inline-flex rounded-lg border border-[#17458F]/20 bg-[#17458F]/5 px-4 py-3">
+                            <div class="mt-4 inline-flex max-w-full rounded-lg border border-[#17458F]/20 bg-[#17458F]/5 px-4 py-3">
                                 <div>
                                     <p class="text-xs font-bold uppercase tracking-wider text-[#17458F]">Application ID</p>
-                                    <p class="mt-1 font-mono text-lg font-bold text-rotary-navy">{{ $application->reference_number }}</p>
+                                    <p class="mt-1 break-all font-mono text-lg font-bold text-rotary-navy">{{ $application->reference_number }}</p>
                                 </div>
                             </div>
                             <p class="mt-3 text-xs font-medium text-gray-500">

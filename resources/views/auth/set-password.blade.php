@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
-        <span class="font-semibold text-gray-800">{{ $email }}</span> is verified. Set a password to finish creating your account.
+        <span class="break-all font-semibold text-gray-800">{{ $email }}</span> is verified. Set a password to finish creating your account.
     </div>
 
     <form method="POST" action="{{ route('register.password') }}">

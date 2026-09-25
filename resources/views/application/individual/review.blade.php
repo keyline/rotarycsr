@@ -8,8 +8,8 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Review &amp; Submit</h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-10">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             @include('application._progress', ['application' => $application, 'step' => $step])
 
             @if ($application->isSubmitted())
@@ -24,7 +24,7 @@
             @endif
 
             <div class="space-y-4">
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-sm font-semibold text-gray-800">Personal &amp; Professional Details</h3>
                         @unless ($application->isSubmitted())
@@ -43,27 +43,27 @@
                             'Annual CSR Budget Handled' => $application->ind_annual_budget_handled,
                             'Geographic Responsibility' => $application->ind_geographic_responsibility,
                         ] as $label => $value)
-                            <div>
+                            <div class="min-w-0">
                                 <dt class="text-xs text-gray-400">{{ $label }}</dt>
-                                <dd class="text-gray-700">{{ $value ?? '—' }}</dd>
+                                <dd class="break-words text-gray-700">{{ $value ?? '—' }}</dd>
                             </div>
                         @endforeach
                         <div class="sm:col-span-2">
                             <dt class="text-xs text-gray-400">Current CSR Responsibilities</dt>
-                            <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $application->ind_current_responsibilities ?: '—' !!}</dd>
+                            <dd class="break-words text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $application->ind_current_responsibilities ?: '—' !!}</dd>
                         </div>
                     </dl>
                 </div>
 
                 @forelse ($projects as $i => $project)
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-semibold text-gray-800">CSR Project {{ $i + 1 }}</h3>
                             @unless ($application->isSubmitted())
                                 <a href="{{ route('application.step', $stepNum('projects')) }}" class="text-xs font-semibold text-[#17458F] hover:underline">Edit</a>
                             @endunless
                         </div>
-                        <dl class="space-y-3 text-sm">
+                        <dl class="space-y-3 break-words text-sm">
                             <div>
                                 <dt class="text-xs text-gray-400">Social problems identified and addressed</dt>
                                 <dd class="text-gray-700 [&_ul]:list-disc [&_ul]:pl-5">{!! $project['problem'] ?? '—' !!}</dd>
@@ -87,14 +87,14 @@
                         </dl>
                     </div>
                 @empty
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 text-sm text-gray-400">
+                    <div class="rounded-lg bg-white p-4 text-sm text-gray-400 shadow-sm sm:p-6">
                         No CSR projects added yet — at least one is required before you can submit.
                     </div>
                 @endforelse
             </div>
 
             @unless ($application->isSubmitted())
-                <form method="POST" action="{{ route('application.submit') }}" class="mt-6 bg-white shadow-sm sm:rounded-lg p-6"
+                <form method="POST" action="{{ route('application.submit') }}" class="mt-6 rounded-lg bg-white p-4 shadow-sm sm:p-6"
                       onsubmit="return confirm('Once submitted, this application cannot be edited. Continue?');">
                     @csrf
                     <label class="flex items-start gap-2.5 text-sm text-gray-600 mb-4">

@@ -2,16 +2,16 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-display text-3xl font-bold leading-tight text-rotary-navy">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="font-display text-2xl font-bold leading-tight text-rotary-navy sm:text-3xl">
                 {{ \App\Services\ApplicationOptions::stepTitle($application->applicant_type, $stepKey) }}
             </h2>
-            <span class="text-sm text-gray-500">Step {{ $step }} of {{ $totalSteps }}</span>
+            <span class="shrink-0 text-sm text-gray-500">Step {{ $step }} of {{ $totalSteps }}</span>
         </div>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-10">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             @include('application._progress', ['application' => $application, 'step' => $step])
 
             @if ($locked)
@@ -20,7 +20,7 @@
                 </div>
             @endif
 
-            <div class="award-card p-6 sm:p-8">
+            <div class="award-card p-4 sm:p-8">
                 <form id="wizard-form" method="POST" action="{{ route('application.step', $step) }}" enctype="multipart/form-data">
                     @csrf
 
@@ -28,16 +28,16 @@
                         {{ $slot }}
                     </div>
 
-                    <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
-                        <div class="flex items-center gap-1.5 text-xs text-gray-400" id="autosave-status">&nbsp;</div>
+                    <div class="mt-8 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex min-w-0 items-center gap-1.5 text-xs text-gray-400" id="autosave-status">&nbsp;</div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
                             @if ($step > 1)
                                 <a href="{{ route('application.step', $step - 1) }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900">Back</a>
                             @endif
 
                             @unless ($locked)
-                                <button type="submit" class="award-button">
+                                <button type="submit" class="award-button flex-1 sm:flex-none">
                                     Save &amp; Continue
                                 </button>
                             @endunless

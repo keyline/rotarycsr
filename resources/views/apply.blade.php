@@ -14,19 +14,19 @@
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
         <header class="w-full border-b border-rotary-gold/20 bg-white/90 backdrop-blur">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+            <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
                 <a href="{{ url('/') }}">
-                    <x-site-logo class="h-auto w-44 sm:w-80" />
+                    <x-site-logo class="h-auto w-36 sm:w-80" />
                 </a>
-                <a href="{{ route('login') }}" class="rounded-full border border-rotary-navy/20 px-5 py-2.5 text-sm font-bold text-rotary-navy transition hover:bg-rotary-navy hover:text-white">Log in</a>
+                <a href="{{ route('login') }}" class="shrink-0 rounded-full border border-rotary-navy/20 px-4 py-2.5 text-sm font-bold text-rotary-navy transition hover:bg-rotary-navy hover:text-white sm:px-5">Log in</a>
             </div>
         </header>
 
-        <main class="award-sky-panel flex flex-1 items-center justify-center px-5 py-16 sm:px-8" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+        <main class="award-sky-panel flex flex-1 items-center justify-center px-4 py-10 sm:px-8 sm:py-16" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
             <div class="w-full max-w-5xl">
                 <div class="mb-10 text-center text-white">
                     <p class="award-kicker mb-3" style="font-size: 17px;">Rotary CSR Awards 2026</p>
-                    <h1 class="font-display text-4xl font-bold sm:text-6xl">Choose your award category</h1>
+                    <h1 class="font-display text-3xl font-bold sm:text-6xl">Choose your award category</h1>
                     <p class="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
                         Choose the award category that fits you. You'll register your account next, then complete the
                         application form for the category you select — you can save your progress as a draft at any time.
@@ -35,16 +35,16 @@
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <a href="{{ route('register', ['type' => 'corporate']) }}"
-                       class="group award-card flex flex-col p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
-                        <div class="flex items-center gap-5">
+                       class="group award-card flex flex-col p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
+                        <div class="flex items-center gap-3 sm:gap-5">
                             <img src="{{ asset('images/category-corporate-navy.png') }}"
                                  alt="CSR Corporate Excellence"
-                                 class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30"
+                                 class="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30 sm:h-20 sm:w-20"
                                  width="80"
                                  height="80">
                             <div class="min-w-0">
                                 <p class="award-kicker">Category A</p>
-                                <h2 class="mt-1 font-display text-2xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">CSR Corporate Excellence</h2>
+                                <h2 class="mt-1 font-display text-xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">CSR Corporate Excellence</h2>
                             </div>
                         </div>
                         <p class="mt-5 text-base leading-7 text-slate-600">
@@ -58,16 +58,16 @@
                     </a>
                     
                     <a href="{{ route('register', ['type' => 'individual']) }}"
-                       class="group award-card flex flex-col p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
-                        <div class="flex items-center gap-5">
+                       class="group award-card flex flex-col p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-rotary-gold sm:p-7">
+                        <div class="flex items-center gap-3 sm:gap-5">
                             <img src="{{ asset('images/category-leader-navy.png') }}"
                                  alt="Corporate CSR Leader"
-                                 class="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30"
+                                 class="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-rotary-gold/30 sm:h-20 sm:w-20"
                                  width="80"
                                  height="80">
                             <div class="min-w-0">
                                 <p class="award-kicker">Category B</p>
-                                <h2 class="mt-1 font-display text-2xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">Corporate CSR Leader</h2>
+                                <h2 class="mt-1 font-display text-xl font-bold leading-tight text-rotary-navy sm:text-[1.7rem]">Corporate CSR Leader</h2>
                             </div>
                         </div>
                         <p class="mt-5 text-base leading-7 text-slate-600">

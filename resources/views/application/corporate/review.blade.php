@@ -7,8 +7,8 @@
         <h2 class="font-display text-3xl font-bold leading-tight text-rotary-navy">Review &amp; Submit</h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-10">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             @include('application._progress', ['application' => $application, 'step' => $step])
 
             @if ($application->isSubmitted())
@@ -23,7 +23,7 @@
             @endif
 
             <div class="space-y-4">
-                <div class="rounded-lg bg-white p-6 shadow-sm">
+                <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                     <div class="mb-3 flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-gray-800">Company Information</h3>
                         @unless ($application->isSubmitted())
@@ -38,7 +38,7 @@
                     </dl>
                 </div>
 
-                <div class="rounded-lg bg-white p-6 shadow-sm">
+                <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                     <div class="mb-3 flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-gray-800">Area of Focus</h3>
                         @unless ($application->isSubmitted())
@@ -48,7 +48,7 @@
                     <p class="text-sm text-gray-700">{{ \App\Services\ApplicationOptions::FOCUS_AREAS[$application->focus_area] ?? '—' }}</p>
                 </div>
 
-                <div class="rounded-lg bg-white p-6 shadow-sm">
+                <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                     <div class="mb-3 flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-gray-800">Corporate / Applicant Details</h3>
                         @unless ($application->isSubmitted())
@@ -72,15 +72,15 @@
                             'Secondary Contact — Email ID' => $application->secondary_contact_email,
                             'Secondary Contact — Mobile Number' => $application->secondary_contact_mobile,
                         ] as $label => $value)
-                            <div>
+                            <div class="min-w-0">
                                 <dt class="text-xs text-gray-400">{{ $label }}</dt>
-                                <dd class="text-gray-700">{{ $value ?: '—' }}</dd>
+                                <dd class="break-words text-gray-700">{{ $value ?: '—' }}</dd>
                             </div>
                         @endforeach
                     </dl>
                 </div>
 
-                <div class="rounded-lg bg-white p-6 shadow-sm">
+                <div class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                     <div class="mb-3 flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-gray-800">Project Details</h3>
                         @unless ($application->isSubmitted())
@@ -97,13 +97,13 @@
                             'CSR Budget / Project Cost' => $application->csr_budget !== null ? '₹'.number_format((float) $application->csr_budget, 2) : null,
                             'Direct and Indirect Beneficiaries' => $application->beneficiaries_impacted,
                         ] as $label => $value)
-                            <div>
+                            <div class="min-w-0">
                                 <dt class="text-xs text-gray-400">{{ $label }}</dt>
-                                <dd class="text-gray-700">{{ $value ?: '—' }}</dd>
+                                <dd class="break-words text-gray-700">{{ $value ?: '—' }}</dd>
                             </div>
                         @endforeach
                     </dl>
-                    <dl class="mt-4 space-y-3 text-sm">
+                    <dl class="mt-4 space-y-3 break-words text-sm">
                         @foreach ([
                             'Brief Project Concept / Design' => $application->intervention_design,
                             'Unique Feature of the Initiative' => $application->unique_feature,
@@ -119,7 +119,7 @@
                     <div class="mt-5 border-t border-gray-100 pt-4">
                         <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Supporting Documents / Proof</p>
                         @forelse ($application->supportingDocuments as $document)
-                            <a href="{{ route('application.supporting-documents.download', $document) }}" class="mt-2 block text-sm font-semibold text-[#17458F] hover:underline">
+                            <a href="{{ route('application.supporting-documents.download', $document) }}" class="mt-2 block break-all text-sm font-semibold text-[#17458F] hover:underline">
                                 {{ $document->original_name }} ({{ strtoupper($document->media_type) }})
                             </a>
                         @empty
@@ -130,7 +130,7 @@
             </div>
 
             @unless ($application->isSubmitted())
-                <form method="POST" action="{{ route('application.submit') }}" class="mt-6 rounded-lg bg-white p-6 shadow-sm"
+                <form method="POST" action="{{ route('application.submit') }}" class="mt-6 rounded-lg bg-white p-4 shadow-sm sm:p-6"
                       onsubmit="return confirm('Once submitted, this application cannot be edited. Continue?');">
                     @csrf
                     <label class="mb-4 flex items-start gap-2.5 text-sm text-gray-600">
