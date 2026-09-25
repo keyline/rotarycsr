@@ -8,13 +8,14 @@
 
         <div>
             <x-input-label for="password" :value="__('Password')" />
-            <x-password-input id="password" class="block w-full" name="password" required autofocus autocomplete="new-password" />
+            <x-password-input id="password" class="block w-full" name="password" required autofocus autocomplete="new-password" maxlength="10" />
+            <p class="mt-2 text-sm text-gray-600">Use 8 to 10 characters.</p>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-            <x-password-input id="password_confirmation" class="block w-full" name="password_confirmation" required autocomplete="new-password" />
+            <x-password-input id="password_confirmation" class="block w-full" name="password_confirmation" required autocomplete="new-password" maxlength="10" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
