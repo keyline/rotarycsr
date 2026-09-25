@@ -16,7 +16,7 @@
         <header class="w-full border-b border-rotary-gold/20 bg-white/90 backdrop-blur">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
                 <a href="{{ url('/') }}">
-                    <x-site-logo class="h-12 w-auto" />
+                    <x-site-logo class="h-14 w-auto sm:h-20" />
                 </a>
                 <a href="{{ route('login') }}" class="rounded-full border border-rotary-navy/20 px-5 py-2.5 text-sm font-bold text-rotary-navy transition hover:bg-rotary-navy hover:text-white">Log in</a>
             </div>
