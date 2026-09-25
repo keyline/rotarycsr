@@ -49,10 +49,8 @@
                 @foreach ([
                     'approved' => ['Approve', 'bg-green-600 hover:bg-green-700'],
                     'rejected' => ['Reject', 'bg-red-600 hover:bg-red-700'],
-                    'blacklisted' => ['Blacklist', 'bg-gray-900 hover:bg-black'],
                 ] as $decision => [$label, $classes])
-                    <form method="POST" action="{{ route('admin.applications.decision', $application) }}"
-                          @if ($decision === 'blacklisted') onsubmit="return confirm('Blacklist this applicant? They will be blocked from future award cycles.');" @endif>
+                    <form method="POST" action="{{ route('admin.applications.decision', $application) }}">
                         @csrf
                         @method('PATCH')
                         <input type="hidden" name="decision" value="{{ $decision }}">
@@ -65,7 +63,7 @@
                 @endforeach
             </div>
         </div>
-        <p class="mt-3 text-xs text-gray-500">Saving a decision emails the applicant. Blacklisting also blocks all future applications for this email.</p>
+        <p class="mt-3 text-xs text-gray-500">Saving a decision emails the applicant.</p>
     </div>
 @endif
 
@@ -147,13 +145,34 @@
             </dl>
             <div class="mt-4 border-t border-gray-100 pt-3">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Supporting Documents / Proof</p>
-                @forelse ($application->supportingDocuments as $document)
-                    <a href="{{ route('application.supporting-documents.download', $document) }}" class="mt-1.5 block text-sm font-semibold text-[#17458F] hover:underline">
-                        {{ $document->original_name }} ({{ strtoupper($document->media_type) }})
-                    </a>
-                @empty
+                @if ($application->supportingDocuments->isEmpty())
                     <p class="mt-1.5 text-sm text-gray-400">No supporting media uploaded.</p>
-                @endforelse
+                @else
+                    <div class="mt-3 grid gap-4 sm:grid-cols-2">
+                        @foreach ($application->supportingDocuments as $document)
+                            @php($previewUrl = route('application.supporting-documents.preview', $document))
+                            <article class="min-w-0 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                @if ($document->media_type === 'image')
+                                    <a href="{{ $previewUrl }}" target="_blank" rel="noopener noreferrer" class="block">
+                                        <img src="{{ $previewUrl }}" alt="{{ $document->original_name }}"
+                                             class="mx-auto h-[200px] w-[200px] rounded-md border border-gray-200 bg-white object-contain">
+                                    </a>
+                                @elseif ($document->media_type === 'video')
+                                    <video controls preload="metadata" class="aspect-video w-full rounded-md bg-black">
+                                        <source src="{{ $previewUrl }}" type="{{ $document->mime_type }}">
+                                        Your browser does not support video playback.
+                                    </video>
+                                @endif
+
+                                <a href="{{ $previewUrl }}" target="_blank" rel="noopener noreferrer"
+                                   class="mt-2 block truncate text-sm font-semibold text-[#17458F] hover:underline"
+                                   title="{{ $document->original_name }}">
+                                    {{ $document->original_name }} ({{ strtoupper($document->media_type) }})
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>

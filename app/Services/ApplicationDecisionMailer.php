@@ -18,10 +18,6 @@ class ApplicationDecisionMailer
             'subject' => 'Update on your Rotary CSR Awards application',
             'body' => '<p>Dear {name},</p><p>After careful review, your {application_type} application for the Rotary CSR Awards 2026 was not selected.</p><p>Thank you for your participation.</p>',
         ],
-        'blacklisted' => [
-            'subject' => 'Important notice regarding your Rotary CSR Awards application',
-            'body' => '<p>Dear {name},</p><p>Your {application_type} application has been blacklisted. You will not be eligible to apply in future award cycles using this account or email address.</p><p>Regards,<br>Rotary District 3291 CSR Awards Team</p>',
-        ],
     ];
 
     public function __construct(private readonly BrevoMailer $mailer) {}

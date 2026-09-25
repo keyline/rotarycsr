@@ -56,7 +56,7 @@
     <div class="mt-6 max-w-4xl rounded-lg border border-gray-200 bg-white p-5">
         <h2 class="text-sm font-semibold text-gray-800">Application Decision Emails</h2>
         <p class="mt-1 text-xs leading-5 text-gray-500">
-            These emails are sent when an application is approved, rejected, or blacklisted.
+            These emails are sent when an application is approved or rejected.
             Available placeholders: <code>{name}</code>, <code>{decision}</code>, and <code>{application_type}</code>.
             HTML is supported in the message body.
         </p>
@@ -65,7 +65,7 @@
             @csrf
             @method('PUT')
 
-            @foreach (['approved' => 'Approved', 'rejected' => 'Rejected', 'blacklisted' => 'Blacklisted'] as $decision => $label)
+            @foreach (['approved' => 'Approved', 'rejected' => 'Rejected'] as $decision => $label)
                 <fieldset class="rounded-lg border border-gray-200 p-4">
                     <legend class="px-2 text-xs font-bold uppercase tracking-wider text-[#17458F]">{{ $label }} email</legend>
                     <div class="space-y-3">

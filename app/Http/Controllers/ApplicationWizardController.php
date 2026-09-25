@@ -241,16 +241,26 @@ class ApplicationWizardController extends Controller
         Request $request,
         ApplicationSupportingDocument $document,
     ): StreamedResponse {
-        abort_unless(
-            $request->user()->isAdmin() || $document->application()->where('user_id', $request->user()->id)->exists(),
-            404,
-        );
-        abort_unless(Storage::disk('local')->exists($document->path), 404);
+        $this->authorizeSupportingDocument($request, $document);
 
         return Storage::disk('local')->download(
             $document->path,
             $document->original_name,
             ['Content-Type' => $document->mime_type],
+        );
+    }
+
+    public function previewSupportingDocument(
+        Request $request,
+        ApplicationSupportingDocument $document,
+    ): StreamedResponse {
+        $this->authorizeSupportingDocument($request, $document);
+
+        return Storage::disk('local')->response(
+            $document->path,
+            $document->original_name,
+            ['Content-Type' => $document->mime_type],
+            'inline',
         );
     }
 
@@ -298,5 +308,16 @@ class ApplicationWizardController extends Controller
             ['user_id' => $user->id],
             ['applicant_type' => $user->applicant_type, 'status' => 'draft', 'current_step' => 1]
         );
+    }
+
+    private function authorizeSupportingDocument(
+        Request $request,
+        ApplicationSupportingDocument $document,
+    ): void {
+        abort_unless(
+            $request->user()->isAdmin() || $document->application()->where('user_id', $request->user()->id)->exists(),
+            404,
+        );
+        abort_unless(Storage::disk('local')->exists($document->path), 404);
     }
 }

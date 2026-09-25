@@ -23,7 +23,7 @@ class UpdateApplicationDecisionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'decision' => ['required', Rule::in(['approved', 'rejected', 'blacklisted'])],
+            'decision' => ['required', Rule::in(['approved', 'rejected'])],
         ];
     }
 }

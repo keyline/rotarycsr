@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/application/supporting-documents/{document}', [ApplicationWizardController::class, 'downloadSupportingDocument'])
         ->name('application.supporting-documents.download');
+    Route::get('/application/supporting-documents/{document}/preview', [ApplicationWizardController::class, 'previewSupportingDocument'])
+        ->name('application.supporting-documents.preview');
 });
 
 Route::middleware(['auth', 'not-blacklisted'])->prefix('application')->name('application.')->group(function () {

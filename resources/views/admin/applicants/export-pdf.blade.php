@@ -25,6 +25,12 @@
         td { border: 1px solid #d1d5db; padding: 6px 8px; vertical-align: top; word-wrap: break-word; }
         td:first-child { background: #f3f4f6; color: #374151; font-weight: bold; width: 29%; }
         .empty { color: #9ca3af; }
+        .media-section { border-top: 2px solid #d49b2a; margin-top: 14px; padding-top: 8px; }
+        .media-title { color: #0b3763; font-size: 13px; font-weight: bold; margin: 0 0 8px; }
+        .media-item { margin-bottom: 12px; page-break-inside: avoid; }
+        .media-name { color: #374151; font-weight: bold; margin-bottom: 5px; }
+        .media-image { border: 1px solid #d1d5db; display: block; max-height: 200px; max-width: 200px; object-fit: contain; }
+        .media-link { color: #17458f; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -33,29 +39,48 @@
 
     @foreach ($records as $record)
         @php
+            $fields = $record['fields'];
             [$statusLabel, $statusClass] = match (true) {
-                $record['Application Status'] !== 'Submitted' => ['Application pending', 'badge-pending-application'],
-                $record['Review Status'] === 'Approved' => ['Approved', 'badge-approved'],
-                $record['Review Status'] === 'Rejected' => ['Rejected', 'badge-rejected'],
-                $record['Review Status'] === 'Blacklisted' => ['Blacklisted', 'badge-blacklisted'],
+                $record['application_status'] !== 'submitted' => ['Application pending', 'badge-pending-application'],
+                $record['review_status'] === 'approved' => ['Approved', 'badge-approved'],
+                $record['review_status'] === 'rejected' => ['Rejected', 'badge-rejected'],
+                $record['review_status'] === 'blacklisted' => ['Blacklisted', 'badge-blacklisted'],
                 default => ['Pending review', 'badge-pending-review'],
             };
         @endphp
         <section class="record">
             <table class="record-header">
                 <tr>
-                    <td class="record-title">{{ $record['Name'] ?: 'Applicant' }} · {{ $record['Applicant Type'] }}</td>
+                    <td class="record-title">{{ $fields['Name'] ?: 'Applicant' }} · {{ $fields['Applicant Type'] }}</td>
                     <td class="record-status"><span class="badge {{ $statusClass }}">{{ $statusLabel }}</span></td>
                 </tr>
             </table>
             <table>
-                @foreach ($record as $label => $value)
+                @foreach ($fields as $label => $value)
                     <tr>
                         <td>{{ $label }}</td>
                         <td class="{{ $value === '' ? 'empty' : '' }}">{!! $value === '' ? '—' : nl2br(e($value)) !!}</td>
                     </tr>
                 @endforeach
             </table>
+
+            @if ($record['media'] !== [])
+                <div class="media-section">
+                    <div class="media-title">Supporting Documents / Proof</div>
+                    @foreach ($record['media'] as $media)
+                        <div class="media-item">
+                            <div class="media-name">{{ $media['name'] }} ({{ strtoupper($media['type']) }})</div>
+                            @if ($media['type'] === 'image' && $media['data_uri'] !== '')
+                                <a href="{{ $media['url'] }}" target="_blank">
+                                    <img src="{{ $media['data_uri'] }}" alt="{{ $media['name'] }}" class="media-image">
+                                </a>
+                            @else
+                                <a href="{{ $media['url'] }}" target="_blank" class="media-link">{{ $media['url'] }}</a>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </section>
     @endforeach
 </body>

@@ -37,8 +37,8 @@ class ApplicationDecisionController extends Controller
             ]);
 
             $application->user->update([
-                'blacklisted_at' => $decision === 'blacklisted' ? now() : null,
-                'blacklisted_by' => $decision === 'blacklisted' ? $request->user()->id : null,
+                'blacklisted_at' => null,
+                'blacklisted_by' => null,
             ]);
         });
 

@@ -38,7 +38,7 @@
     }" @keydown.escape.window="open = false; awardConfirmOpen = false; emailOpen = false">
         <!-- Filters -->
         <form method="GET" class="bg-white border border-gray-200 rounded-lg p-4 mb-4 flex flex-wrap items-end gap-3">
-            <div class="flex-1 min-w-[200px]">
+            <div class="min-w-0 flex-1 basis-full sm:min-w-[200px] sm:basis-auto">
                 <label class="block text-xs font-medium text-gray-500 mb-1">Search</label>
                 <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Name, email, or company"
                        class="w-full text-sm border-gray-300 rounded-md focus:border-[#17458F] focus:ring-[#17458F]">
@@ -93,7 +93,7 @@
                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <button type="submit" name="format" value="pdf" :disabled="selected.length === 0"
                         class="rounded-md border border-[#17458F]/25 bg-white px-3 py-2 text-sm font-semibold text-[#17458F] transition hover:bg-[#17458F]/5 disabled:cursor-not-allowed disabled:opacity-40">
                     Export PDF
@@ -107,9 +107,9 @@
 
         <!-- Table -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50 border-b border-gray-200">
+            <div class="overflow-x-hidden">
+                <table class="block w-full text-sm xl:table">
+                    <thead class="hidden bg-gray-50 border-b border-gray-200 xl:table-header-group">
                         <tr>
                             <th class="w-12 px-4 py-2.5 text-left">
                                 <input type="checkbox" aria-label="Select all applicants on this page"
@@ -125,7 +125,7 @@
                             <th class="text-right px-4 py-2.5 font-medium text-gray-500">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="block divide-y divide-gray-100 xl:table-row-group">
                         @forelse ($applicants as $applicant)
                             @php
                                 $reviewStatus = $applicant->application?->review_status ?? 'not_started';
@@ -142,38 +142,47 @@
                             @endphp
                             <tr data-applicant-row="{{ $applicant->id }}"
                                 data-award-complete="{{ $awardComplete ? 'true' : 'false' }}"
-                                class="transition {{ $awardComplete ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50' }}">
-                                <td class="px-4 py-2.5">
+                                class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-2 p-4 transition xl:table-row xl:p-0 {{ $awardComplete ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50' }}">
+                                <td class="block pt-1 xl:table-cell xl:px-4 xl:py-2.5">
                                     <input type="checkbox" value="{{ $applicant->id }}" x-model.number="selected"
                                            aria-label="Select {{ $applicant->name }}"
                                            class="rounded border-gray-300 text-[#17458F] focus:ring-[#17458F]">
                                 </td>
-                                <td class="px-4 py-2.5">
+                                <td class="block min-w-0 xl:table-cell xl:px-4 xl:py-2.5">
                                     <div class="font-medium text-gray-800">{{ $applicant->name }}</div>
                                     @if ($applicant->company_name)
                                         <div class="text-xs text-gray-400">{{ $applicant->company_name }}</div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-2.5 text-gray-600">{{ $applicant->email }}</td>
-                                <td class="px-4 py-2.5">
+                                <td class="col-span-2 block min-w-0 break-all text-gray-600 xl:table-cell xl:px-4 xl:py-2.5">
+                                    <span class="mr-1 text-xs font-semibold text-gray-400 xl:hidden">Email:</span>
+                                    {{ $applicant->email }}
+                                </td>
+                                <td class="col-span-2 block xl:table-cell xl:px-4 xl:py-2.5">
+                                    <span class="mr-1 text-xs font-semibold text-gray-400 xl:hidden">Category:</span>
                                     <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full {{ $applicant->applicant_type === 'corporate' ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
                                         {{ ucfirst($applicant->applicant_type ?? '—') }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2.5">
+                                <td class="col-span-2 block xl:table-cell xl:px-4 xl:py-2.5">
+                                    <span class="mr-1 text-xs font-semibold text-gray-400 xl:hidden">Email status:</span>
                                     @if ($applicant->email_verified_at)
                                         <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700">Verified</span>
                                     @else
                                         <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700">Pending</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-2.5">
+                                <td class="col-span-2 block xl:table-cell xl:px-4 xl:py-2.5">
+                                    <span class="mr-1 text-xs font-semibold text-gray-400 xl:hidden">Review:</span>
                                     <span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium {{ $reviewClasses }}">
                                         {{ $reviewStatus === 'not_started' ? 'Not started' : ucfirst($reviewStatus) }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2.5 text-gray-500">{{ $applicant->created_at->format('d M Y') }}</td>
-                                <td class="px-4 py-2.5 text-right">
+                                <td class="col-span-2 block text-gray-500 xl:table-cell xl:px-4 xl:py-2.5">
+                                    <span class="mr-1 text-xs font-semibold text-gray-400 xl:hidden">Registered:</span>
+                                    {{ $applicant->created_at->format('d M Y') }}
+                                </td>
+                                <td class="col-span-2 block pt-2 xl:table-cell xl:px-4 xl:py-2.5 xl:text-right">
                                     @php
                                         [$actionStatusLabel, $actionStatusClasses] = match (true) {
                                             ! $applicant->application?->isSubmitted() => ['Application pending', 'bg-gray-100 text-gray-600'],
@@ -183,7 +192,7 @@
                                             default => ['Pending review', 'bg-amber-50 text-amber-700'],
                                         };
                                     @endphp
-                                    <div class="flex items-center justify-end gap-2 whitespace-nowrap">
+                                    <div class="flex flex-wrap items-center justify-start gap-2 whitespace-normal xl:justify-end">
                                         <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $actionStatusClasses }}">
                                             {{ $actionStatusLabel }}
                                         </span>
@@ -255,8 +264,8 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="8" class="px-4 py-8 text-center text-gray-400">No applicants found.</td>
+                            <tr class="block xl:table-row">
+                                <td colspan="8" class="block px-4 py-8 text-center text-gray-400 xl:table-cell">No applicants found.</td>
                             </tr>
                         @endforelse
                     </tbody>

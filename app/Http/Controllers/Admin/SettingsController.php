@@ -48,13 +48,11 @@ class SettingsController extends Controller
     public function updateDecisionEmails(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'templates' => ['required', 'array'],
+            'templates' => ['required', 'array:approved,rejected'],
             'templates.approved.subject' => ['required', 'string', 'max:255'],
             'templates.approved.body' => ['required', 'string', 'max:10000'],
             'templates.rejected.subject' => ['required', 'string', 'max:255'],
             'templates.rejected.body' => ['required', 'string', 'max:10000'],
-            'templates.blacklisted.subject' => ['required', 'string', 'max:255'],
-            'templates.blacklisted.body' => ['required', 'string', 'max:10000'],
         ]);
 
         foreach ($validated['templates'] as $decision => $template) {

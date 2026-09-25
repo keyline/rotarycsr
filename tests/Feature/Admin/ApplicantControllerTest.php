@@ -7,6 +7,7 @@ use App\Models\Application;
 use App\Models\User;
 use App\Services\ApplicantMessageMailer;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ApplicantControllerTest extends TestCase
@@ -74,5 +75,44 @@ class ApplicantControllerTest extends TestCase
         $response->assertSee(ApplicantMessageMailer::AWARD_SUBJECT);
         $response->assertSee('We are pleased to inform you that you have been selected for an award.');
         $response->assertSee('No email will be sent automatically.');
+    }
+
+    public function test_application_popup_previews_images_and_videos_without_a_blacklist_action(): void
+    {
+        Storage::fake('local');
+        $admin = User::factory()->create(['role' => 'admin']);
+        $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
+        $application = Application::create([
+            'user_id' => $applicant->id,
+            'applicant_type' => 'corporate',
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+        Storage::disk('local')->put('supporting/project.jpg', 'image');
+        Storage::disk('local')->put('supporting/project.mp4', 'video');
+        $image = $application->supportingDocuments()->create([
+            'path' => 'supporting/project.jpg',
+            'original_name' => 'project.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 5,
+            'media_type' => 'image',
+        ]);
+        $video = $application->supportingDocuments()->create([
+            'path' => 'supporting/project.mp4',
+            'original_name' => 'project.mp4',
+            'mime_type' => 'video/mp4',
+            'size' => 5,
+            'media_type' => 'video',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.applicants.show', $applicant));
+
+        $response->assertOk();
+        $response->assertSee('<img', false);
+        $response->assertSee('<video', false);
+        $response->assertSee(route('application.supporting-documents.preview', $image), false);
+        $response->assertSee(route('application.supporting-documents.preview', $video), false);
+        $response->assertSee('target="_blank"', false);
+        $response->assertDontSee('Blacklist');
     }
 }

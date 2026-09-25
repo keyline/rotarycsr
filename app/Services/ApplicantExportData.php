@@ -3,39 +3,43 @@
 namespace App\Services;
 
 use App\Models\Application;
+use App\Models\ApplicationSupportingDocument;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class ApplicantExportData
 {
-    /** @return array<string, string> */
-    public function for(User $applicant): array
+    /**
+     * @return array{
+     *     fields: array<string, string>,
+     *     application_status: string,
+     *     review_status: string,
+     *     media: list<array{name: string, type: string, url: string, data_uri: string}>
+     * }
+     */
+    public function for(User $applicant, bool $includeImageData = false): array
     {
         $application = $applicant->application;
         $data = [
-            'Applicant ID' => (string) $applicant->id,
+            'Application ID' => $this->text($application?->reference_number),
             'Name' => $this->text($applicant->name),
             'Email' => $this->text($applicant->email),
             'Applicant Type' => ucfirst($this->text($applicant->applicant_type)),
             'Company Name' => $this->text($applicant->company_name),
-            'Email Verified' => $applicant->email_verified_at ? 'Yes' : 'No',
-            'Registered At' => $applicant->created_at?->format('d M Y, h:i A') ?? '',
-            'Blacklisted At' => $applicant->blacklisted_at?->format('d M Y, h:i A') ?? '',
-            'Application Status' => ucfirst($this->text($application?->status ?: 'Not started')),
-            'Application ID' => $this->text($application?->reference_number),
-            'Review Status' => ucfirst($this->text($application?->review_status ?: 'Not started')),
-            'Submitted At' => $application?->submitted_at?->format('d M Y, h:i A') ?? '',
-            'Reviewed At' => $application?->reviewed_at?->format('d M Y, h:i A') ?? '',
-            'Reviewed By' => $this->text($application?->reviewer?->name),
-            'Application Updated At' => $application?->updated_at?->format('d M Y, h:i A') ?? '',
         ];
 
-        if (! $application) {
-            return $data;
+        if ($application) {
+            $data = array_merge($data, $application->applicant_type === 'individual'
+                ? $this->individualFields($application)
+                : $this->corporateFields($application));
         }
 
-        return array_merge($data, $application->applicant_type === 'individual'
-            ? $this->individualFields($application)
-            : $this->corporateFields($application));
+        return [
+            'fields' => $data,
+            'application_status' => $this->text($application?->status ?: 'not_started'),
+            'review_status' => $this->text($application?->review_status ?: 'not_started'),
+            'media' => $application ? $this->supportingMedia($application, $includeImageData) : [],
+        ];
     }
 
     /** @return array<string, string> */
@@ -70,8 +74,35 @@ class ApplicantExportData
             'Brief Project Concept / Design' => $this->text($application->intervention_design),
             'Unique Feature of the Initiative' => $this->text($application->unique_feature),
             'Impact Assessment' => $this->text($application->outcomes_impact),
-            'Supporting Documents / Proof' => $application->supportingDocuments->pluck('original_name')->implode(', '),
         ];
+    }
+
+    /** @return list<array{name: string, type: string, url: string, data_uri: string}> */
+    private function supportingMedia(Application $application, bool $includeImageData): array
+    {
+        return $application->supportingDocuments
+            ->map(function (ApplicationSupportingDocument $document) use ($includeImageData): array {
+                $dataUri = '';
+
+                if ($includeImageData
+                    && $document->media_type === 'image'
+                    && Storage::disk('local')->exists($document->path)) {
+                    $contents = Storage::disk('local')->get($document->path);
+
+                    if (is_string($contents)) {
+                        $dataUri = 'data:'.$document->mime_type.';base64,'.base64_encode($contents);
+                    }
+                }
+
+                return [
+                    'name' => $this->text($document->original_name),
+                    'type' => $this->text($document->media_type),
+                    'url' => route('application.supporting-documents.preview', $document),
+                    'data_uri' => $dataUri,
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /** @return array<string, string> */

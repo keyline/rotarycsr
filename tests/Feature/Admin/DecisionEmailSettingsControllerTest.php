@@ -16,7 +16,6 @@ class DecisionEmailSettingsControllerTest extends TestCase
         $templates = [
             'approved' => ['subject' => 'Approved {name}', 'body' => '<p>Approved {application_type}</p>'],
             'rejected' => ['subject' => 'Rejected {name}', 'body' => '<p>Rejected {decision}</p>'],
-            'blacklisted' => ['subject' => 'Blacklisted {name}', 'body' => '<p>Blacklisted {application_type}</p>'],
         ];
 
         $response = $this->actingAs($admin)->put(route('admin.settings.decision-emails'), [
@@ -48,5 +47,16 @@ class DecisionEmailSettingsControllerTest extends TestCase
 
         $response->assertForbidden();
         $this->assertDatabaseCount('settings', 0);
+    }
+
+    public function test_blacklisted_email_template_is_not_shown_in_settings(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin)->get(route('admin.settings.index'));
+
+        $response->assertOk();
+        $response->assertDontSee('Blacklisted email');
+        $response->assertDontSee('templates[blacklisted]', false);
     }
 }

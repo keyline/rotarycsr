@@ -66,11 +66,10 @@ class ApplicationDecisionControllerTest extends TestCase
         return [
             'approved' => ['approved', 'Approved'],
             'rejected' => ['rejected', 'Rejected'],
-            'blacklisted' => ['blacklisted', 'Blacklisted'],
         ];
     }
 
-    public function test_admin_can_blacklist_a_submitted_application_and_email_the_applicant(): void
+    public function test_blacklist_is_not_an_available_application_decision(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $applicant = User::factory()->create(['role' => 'applicant', 'applicant_type' => 'corporate']);
@@ -80,28 +79,19 @@ class ApplicationDecisionControllerTest extends TestCase
             'status' => 'submitted',
             'submitted_at' => now(),
         ]);
-        $this->mock(BrevoMailer::class)
-            ->shouldReceive('send')
-            ->once()
-            ->withArgs(fn (string $email, string $name, string $subject, string $body): bool => $email === $applicant->email
-                && $name === $applicant->name
-                && str_contains($subject, 'Important notice')
-                && str_contains($body, 'blacklisted'))
-            ->andReturnTrue();
 
-        $response = $this->actingAs($admin)->patch(route('admin.applications.decision', $application), [
-            'decision' => 'blacklisted',
-        ]);
+        $response = $this->actingAs($admin)
+            ->from(route('admin.applicants.index'))
+            ->patch(route('admin.applications.decision', $application), ['decision' => 'blacklisted']);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('status', 'Application marked as Blacklisted.');
+        $response->assertRedirect(route('admin.applicants.index'));
+        $response->assertSessionHasErrors('decision');
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
-            'review_status' => 'blacklisted',
-            'reviewed_by' => $admin->id,
+            'review_status' => 'pending',
         ]);
-        $this->assertNotNull($applicant->fresh()->blacklisted_at);
-        $this->assertSame($admin->id, $applicant->fresh()->blacklisted_by);
+        $this->assertNull($applicant->fresh()->blacklisted_at);
+        $this->assertDatabaseCount('applicant_email_logs', 0);
     }
 
     public function test_non_admin_cannot_review_an_application(): void

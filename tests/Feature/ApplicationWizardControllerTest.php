@@ -484,7 +484,7 @@ class ApplicationWizardControllerTest extends TestCase
         ]);
     }
 
-    public function test_supporting_media_download_is_limited_to_the_owner_and_admin(): void
+    public function test_supporting_media_download_and_preview_are_limited_to_the_owner_and_admin(): void
     {
         Storage::fake('local');
         [$owner, $application] = $this->corporateApplicationAtStep(4);
@@ -502,11 +502,22 @@ class ApplicationWizardControllerTest extends TestCase
         $this->actingAs($owner)
             ->get(route('application.supporting-documents.download', $document))
             ->assertOk();
+        $previewResponse = $this->actingAs($owner)
+            ->get(route('application.supporting-documents.preview', $document))
+            ->assertOk()
+            ->assertHeader('content-type', 'image/jpeg');
+        $this->assertStringStartsWith('inline;', $previewResponse->headers->get('content-disposition'));
         $this->actingAs($otherApplicant)
             ->get(route('application.supporting-documents.download', $document))
             ->assertNotFound();
+        $this->actingAs($otherApplicant)
+            ->get(route('application.supporting-documents.preview', $document))
+            ->assertNotFound();
         $this->actingAs($admin)
             ->get(route('application.supporting-documents.download', $document))
+            ->assertOk();
+        $this->actingAs($admin)
+            ->get(route('application.supporting-documents.preview', $document))
             ->assertOk();
     }
 
