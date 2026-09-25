@@ -14,16 +14,18 @@
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
         <header class="absolute inset-x-0 top-0 z-20 w-full">
-            <div class="flex w-full justify-end px-5 pt-5 sm:px-8 lg:pt-24">
-                <x-site-logo class="h-auto w-44 sm:w-56 lg:w-64" />
+            <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 px-5 pt-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:pt-20">
+                <p class="award-kicker max-w-3xl text-lg leading-snug tracking-[0.14em] sm:text-xl lg:text-2xl">
+                    Rotary International District 3291 presents
+                </p>
+                <x-site-logo class="h-auto w-44 self-end sm:w-56 lg:w-64 lg:self-auto" />
             </div>
         </header>
 
         <main class="flex-1">
-            <section class="award-hero flex min-h-[650px] items-center pt-20 sm:min-h-[680px]" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+            <section class="award-hero flex min-h-[650px] items-center pt-36 sm:min-h-[680px] sm:pt-40 lg:pt-32" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 <div class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
                     <div class="max-w-xl">
-                        <p class="award-kicker">Rotary International District 3291 presents</p>
                         <h1 class="sr-only">Rotary CSR Awards 2026</h1>
                         <img src="{{ asset('images/rotary-csr-awards-2026-tight.png') }}"
                              alt="Rotary CSR Awards 2026"
