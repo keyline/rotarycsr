@@ -54,13 +54,11 @@
             <div class="home-mobile-header flex min-h-[92px] items-center px-5 py-2 sm:hidden">
                 <a href="{{ url('/') }}" class="flex min-w-0 flex-col items-start" aria-label="Rotary District 3291 home">
                     <x-site-logo class="home-header-logo-mobile block h-auto w-[225px] max-w-full" />
-                    <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </a>
             </div>
             <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
                 <div class="flex flex-col items-start">
                     <x-site-logo class="home-header-logo-desktop h-auto w-60 shrink-0 lg:w-64" />
-                    <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </div>
             </div>
         </header>
