@@ -355,7 +355,9 @@ class ApplicationWizardControllerTest extends TestCase
             [
                 'supporting_documents' => [
                     UploadedFile::fake()->image('project.jpg'),
-                    UploadedFile::fake()->create('project.mp4', 1024, 'video/mp4'),
+                    UploadedFile::fake()
+                        ->createWithContent('project.mp4', pack('N', 24).'ftypisom'.str_repeat("\0", 12))
+                        ->mimeType('application/octet-stream'),
                 ],
             ],
         ));
@@ -365,6 +367,11 @@ class ApplicationWizardControllerTest extends TestCase
         $this->assertSame('continuing', $application->project_completion_status);
         $this->assertNull($application->project_completion_date);
         $this->assertCount(2, $application->supportingDocuments);
+        $this->assertDatabaseHas('application_supporting_documents', [
+            'application_id' => $application->id,
+            'original_name' => 'project.mp4',
+            'media_type' => 'video',
+        ]);
         $application->supportingDocuments->each(function (ApplicationSupportingDocument $document): void {
             Storage::disk('local')->assertExists($document->path);
         });
@@ -413,7 +420,11 @@ class ApplicationWizardControllerTest extends TestCase
         $response = $this->actingAs($applicant)
             ->from(route('application.step', 4))
             ->post(route('application.step', 4), array_merge($this->validProjectDetails(), [
-                'supporting_documents' => [UploadedFile::fake()->create('script.php', 10, 'text/x-php')],
+                'supporting_documents' => [
+                    UploadedFile::fake()
+                        ->createWithContent('script.mp4', '<?php echo "not a video";')
+                        ->mimeType('application/octet-stream'),
+                ],
             ]));
 
         $response->assertRedirect(route('application.step', 4));

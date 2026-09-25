@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\ApplicationSupportingDocument;
+use App\Rules\SupportingMediaFile;
 use App\Services\ActivityLogger;
 use App\Services\ApplicationOptions;
 use Illuminate\Http\JsonResponse;
@@ -63,7 +64,10 @@ class ApplicationWizardController extends Controller
             $remainingDocumentSlots = max(0, 10 - $application->supportingDocuments()->count());
             $rules['supporting_documents'] = ['nullable', 'array', 'max:'.$remainingDocumentSlots];
             $rules['supporting_documents.*'] = [
-                File::types(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm'])->max('5mb'),
+                File::types([])
+                    ->extensions(['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'webm'])
+                    ->max('5mb'),
+                new SupportingMediaFile,
             ];
         }
 
