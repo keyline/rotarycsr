@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-rotary-ivory">
+        <div class="flex min-h-screen flex-col bg-rotary-ivory">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -28,9 +28,11 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="award-sky-panel min-h-[calc(100vh-10rem)] bg-fixed" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
+            <main class="award-sky-panel min-h-[calc(100vh-10rem)] flex-1 bg-fixed" style="--award-background-image: url('{{ asset('images/csr-awards-kolkata-hero.png') }}');">
                 {{ $slot }}
             </main>
+
+            <x-site-footer />
         </div>
     </body>
 </html>

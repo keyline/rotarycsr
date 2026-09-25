@@ -86,9 +86,7 @@
             </div>
         </main>
 
-        <footer class="w-full bg-rotary-navy py-6">
-            <p class="text-center text-xs text-white/50">&copy; {{ date('Y') }} Rotary District 3291. All rights reserved.</p>
-        </footer>
+        <x-site-footer />
     </div>
 </body>
 </html>

@@ -87,12 +87,7 @@
             </section> -->
         </main>
 
-        <footer class="w-full bg-rotary-navy px-6 py-8 text-white/60">
-            <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs sm:flex-row">
-                <p>&copy; {{ date('Y') }} Rotary International District 3291.</p>
-                <p class="uppercase tracking-[0.2em] text-rotary-gold">Create lasting impact</p>
-            </div>
-        </footer>
+        <x-site-footer />
     </div>
 </body>
 </html>
