@@ -50,28 +50,13 @@
 </head>
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
-        <header x-data="{ open: false }" class="relative z-20 w-full bg-white sm:absolute sm:inset-x-0 sm:top-0 sm:bg-transparent">
-            <div class="home-mobile-header flex min-h-[92px] items-center justify-between gap-3 px-5 py-2 sm:hidden">
+        <header class="relative z-20 w-full bg-white sm:absolute sm:inset-x-0 sm:top-0 sm:bg-transparent">
+            <div class="home-mobile-header flex min-h-[92px] items-center px-5 py-2 sm:hidden">
                 <a href="{{ url('/') }}" class="flex min-w-0 flex-col items-start" aria-label="Rotary District 3291 home">
                     <x-site-logo class="home-header-logo-mobile block h-auto w-[225px] max-w-full" />
                     <span class="pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </a>
-                <button type="button" @click="open = ! open" :aria-expanded="open.toString()" aria-controls="home-mobile-menu" aria-label="Toggle navigation" class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-rotary-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-rotary-gold">
-                    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <path x-show="! open" d="M4 6h16M4 12h16M4 18h16" />
-                        <path x-show="open" x-cloak d="M5 5l14 14M19 5L5 19" />
-                    </svg>
-                </button>
             </div>
-            <nav id="home-mobile-menu" x-show="open" x-cloak class="absolute inset-x-0 top-full border-t border-rotary-gold/20 bg-white px-5 py-3 shadow-lg sm:hidden" aria-label="Mobile navigation">
-                <a href="{{ url('/') }}" class="block rounded-lg px-3 py-3 text-sm font-semibold text-rotary-navy hover:bg-rotary-ivory">Home</a>
-                <a href="{{ route('apply') }}" class="block rounded-lg px-3 py-3 text-sm font-semibold text-rotary-navy hover:bg-rotary-ivory">Start Your Nomination</a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="block rounded-lg px-3 py-3 text-sm font-semibold text-rotary-navy hover:bg-rotary-ivory">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="block rounded-lg px-3 py-3 text-sm font-semibold text-rotary-navy hover:bg-rotary-ivory">Continue Application</a>
-                @endauth
-            </nav>
             <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
                 <div class="flex flex-col items-start">
                     <x-site-logo class="home-header-logo-desktop h-auto w-60 shrink-0 lg:w-64" />
