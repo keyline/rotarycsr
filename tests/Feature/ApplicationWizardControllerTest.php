@@ -442,6 +442,11 @@ class ApplicationWizardControllerTest extends TestCase
             'current_step' => 4,
             'project_name' => null,
         ]);
+
+        $this->actingAs($applicant)
+            ->get(route('application.step', 4))
+            ->assertOk()
+            ->assertSeeText('The supporting documents.0 field must not be greater than 5000 kilobytes.');
     }
 
     public function test_supporting_media_download_is_limited_to_the_owner_and_admin(): void
