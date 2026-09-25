@@ -12,9 +12,9 @@
 </head>
 <body class="font-sans antialiased bg-rotary-ivory text-rotary-navy">
     <div class="min-h-screen flex flex-col">
-        <header class="absolute inset-x-0 top-0 z-20 w-full border-b border-white/30 bg-white/80 backdrop-blur-md">
-            <div class="mx-auto flex max-w-7xl items-center justify-end px-5 py-2.5 sm:px-8">
-                <x-site-logo class="h-12 w-auto sm:h-14" />
+        <header class="absolute inset-x-0 top-0 z-20 w-full">
+            <div class="flex w-full justify-end px-5 pt-5 sm:px-8 lg:pt-24">
+                <x-site-logo class="h-auto w-44 sm:w-56 lg:w-64" />
             </div>
         </header>
 
