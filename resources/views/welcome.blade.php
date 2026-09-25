@@ -13,7 +13,8 @@
     <style>
         .home-mobile-header { min-height: 92px; }
         .home-header-logo-mobile { width: min(225px, calc(100vw - 100px)); height: auto; }
-        .home-header-logo-desktop { width: 256px; height: auto; }
+        .home-header-logo-desktop { width: 232px; height: auto; }
+        .home-desktop-district { display: none; }
         .home-hero {
             min-height: calc(100svh - 92px);
             background-image: linear-gradient(90deg, rgba(255, 250, 240, .7), rgba(255, 250, 240, .05) 85%), var(--award-background-image);
@@ -44,7 +45,10 @@
         }
         @media (min-width: 1024px) {
             .home-hero { min-height: 665px; align-items: flex-start; padding-top: 0; }
-            .home-hero-inner { max-width: 1080px; padding-top: 2rem; }
+            .home-hero-inner { max-width: 1080px; padding-top: 2.5rem; }
+            .home-hero-title { font-size: 2rem; }
+            .home-hero-description { font-size: 1rem; line-height: 1.5; }
+            .home-desktop-district { display: block; }
         }
     </style>
 </head>
@@ -59,6 +63,7 @@
             <div class="hidden w-full items-center justify-end px-5 pt-5 sm:flex sm:px-8">
                 <div class="flex flex-col items-start">
                     <x-site-logo class="home-header-logo-desktop h-auto w-60 shrink-0 lg:w-64" />
+                    <span class="home-desktop-district pl-1 text-xs font-extrabold leading-none text-slate-900">District 3291</span>
                 </div>
             </div>
         </header>
