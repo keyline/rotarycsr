@@ -36,7 +36,7 @@
                             for your Company’s outstanding CSR Project.
                         </p>
                         <p class="mt-3 text-base leading-7 text-gray-600">
-                            The event will be held in November 2026 in Kolkata to recognize distinguished Corporates and eminent CSR Leaders.
+                            The event will be held in December 2026 in Kolkata to recognize distinguished Corporates and eminent CSR Leaders.
                         </p>
                     </div>
                     <span class="inline-block px-2.5 py-1 text-xs font-medium rounded-full {{ $isCorporate ? 'bg-[#17458F]/10 text-[#17458F]' : 'bg-[#F7A81B]/10 text-[#a4700f]' }}">
@@ -50,7 +50,6 @@
                                 The submission window closed on {{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}. No further edits or submissions are possible.
                             @else
                                 Submissions close on <span class="font-semibold">{{ \Illuminate\Support\Carbon::parse($deadline)->format('d M Y, h:i A') }}</span>
-                                ({{ \Illuminate\Support\Carbon::parse($deadline)->diffForHumans() }}).
                             @endif
                         </div>
                     @endif
